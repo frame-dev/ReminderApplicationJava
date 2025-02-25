@@ -29,6 +29,7 @@ public class Main {
     public static ReminderManager reminderManager;
     private static String lastNotificationTitle;
 
+    //
     public static void main(String[] args) throws MalformedURLException {
         System.setProperty("apple.awt.UIElement", "true");
         if (!SystemTray.isSupported()) {
