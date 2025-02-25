@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ReminderGUI {
-    
+
     private static JFrame frame;
     private JPanel panel;
     private JList<String> reminderList;
@@ -30,9 +30,14 @@ public class ReminderGUI {
         reminderList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) {
                     ReminderView.main(new String[0]);
-                    ReminderView.init(Main.reminderManager.getReminderByTitle(reminderList.getSelectedValue()).orElse(null));
+                    Reminder reminder = Main.reminderManager.getReminderByTitle(reminderList.getSelectedValue()).orElse(null);
+                    if (reminder == null) {
+                        System.out.println("Reminder not found!");
+                        return;
+                    }
+                    ReminderView.init(reminder);
                 }
             }
         });
@@ -40,7 +45,13 @@ public class ReminderGUI {
             ReminderCreateGUI.main(new String[0]);
         });
     }
-    
+
+    /**
+     * This function loads the list of reminder titles from the ReminderManager and updates the JList in the ReminderGUI.
+     *
+     * @throws NoClassDefFoundError If the ReminderManager class or its dependencies are not found.
+     * @throws NullPointerException If the ReminderManager or any of its methods return null unexpectedly.
+     */
     public void loadList() {
         List<String> reminderTitles = Main.reminderManager.getReminderList()
                 .stream()

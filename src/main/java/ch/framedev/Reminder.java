@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a reminder with a title, message, date, time, notes, and visibility status.
+ */
 public class Reminder {
 
     private String title;
@@ -14,10 +17,26 @@ public class Reminder {
     private List<String> notes;
     private boolean show;
 
+    /**
+     * Constructs a new Reminder object with the given title and message.
+     * The date, time, and notes are set to default values.
+     *
+     * @param title   the title of the reminder
+     * @param message the message of the reminder
+     */
     public Reminder(String title, String message) {
         this(title, message, "Not Set", "Not Set", new ArrayList<>()); // Default values
     }
 
+    /**
+     * Constructs a new Reminder object with the given title, message, date, time, and notes.
+     *
+     * @param title   the title of the reminder
+     * @param message the message of the reminder
+     * @param date    the date of the reminder
+     * @param time    the time of the reminder
+     * @param notes   the notes of the reminder
+     */
     public Reminder(String title, String message, String date, String time, List<String> notes) {
         this.title = title;
         this.message = message;
@@ -81,6 +100,13 @@ public class Reminder {
         System.out.println("🔔 Reminder: " + title + " - " + message);
     }
 
+    /**
+     * Returns a string representation of this Reminder object.
+     * The string representation consists of the Reminder's title, message, date, time, and notes,
+     * enclosed in curly braces and separated by commas.
+     *
+     * @return a string representation of this Reminder object
+     */
     @Override
     public String toString() {
         return "Reminder{" +
@@ -92,6 +118,12 @@ public class Reminder {
                 '}';
     }
 
+    /**
+     * Converts the Reminder object into a formatted string representation.
+     *
+     * @return a string representation of the Reminder object with the following format:
+     * "Title: [title]\nMessage: [message]\nDate: [date] [time]\nNotes: [notes]\nshown: [show]"
+     */
     public String reminderToString() {
         return "Title: " + title + "\n" +
                 "Message: " + message + "\n" +
@@ -100,6 +132,12 @@ public class Reminder {
                 "shown: " + show;
     }
 
+    /**
+     * Parses a reminder string and returns a Reminder object.
+     *
+     * @param reminderString the string representation of the reminder
+     * @return a Reminder object parsed from the given string
+     */
     public static Reminder reminderFromString(String reminderString) {
         String[] parts = reminderString.split("\n");
 
@@ -123,6 +161,14 @@ public class Reminder {
         return reminder;
     }
 
+    /**
+     * Compares the specified object with this Reminder for equality.
+     * Returns {@code true} if the given object is also a Reminder and all its fields (title, message, date, time, notes, and show)
+     * are equal to the corresponding fields of this Reminder; otherwise, returns {@code false}.
+     *
+     * @param o the object to be compared for equality with this Reminder
+     * @return {@code true} if the specified object is equal to this Reminder; {@code false} otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -132,11 +178,19 @@ public class Reminder {
                 Objects.equals(message, reminder.message) &&
                 Objects.equals(date, reminder.date) &&
                 Objects.equals(time, reminder.time) &&
-                Objects.equals(notes, reminder.notes);
+                Objects.equals(notes, reminder.notes) &&
+                Objects.equals(hashCode(), reminder.hashCode()) &&
+                show == reminder.show;
     }
 
+    /**
+     * Generates a hash code for the Reminder object.
+     * The hash code is based on the values of the title, message, date, time, notes, and show fields.
+     *
+     * @return the hash code of the Reminder object
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(title, message, date, time, notes);
+        return Objects.hash(title, message, date, time, notes, show);
     }
 }

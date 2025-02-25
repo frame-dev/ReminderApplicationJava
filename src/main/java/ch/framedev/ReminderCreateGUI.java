@@ -12,12 +12,11 @@ package ch.framedev;
  */
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.List;
 
 public class ReminderCreateGUI {
+
+    private static JFrame frame;
     private JPanel panel;
     private JTextField reminderTitleTextField;
     private JTextField reminderMessageTextField;
@@ -27,23 +26,48 @@ public class ReminderCreateGUI {
     private JButton createReminderButton;
 
     public ReminderCreateGUI() {
-        createReminderButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Reminder reminder = new Reminder(
-                        reminderTitleTextField.getText(),
-                        reminderMessageTextField.getText(),
-                        reminderDateTextField.getText(),
-                        reminderTimeTextField.getText(),
-                        List.of(reminderNotesTextField.getText().split(", ")));
-                Main.reminderManager.addReminder(reminder);
-                ReminderGUI.reminderGUI.loadList();
-            }
+        frame.setJMenuBar(getJMenuBar());
+        createReminderButton.addActionListener(e -> {
+            Reminder reminder = new Reminder(
+                    reminderTitleTextField.getText(),
+                    reminderMessageTextField.getText(),
+                    reminderDateTextField.getText(),
+                    reminderTimeTextField.getText(),
+                    List.of(reminderNotesTextField.getText().split(", ")));
+            Main.reminderManager.addReminder(reminder);
+            ReminderGUI.reminderGUI.loadList();
         });
     }
 
+    /**
+     * This method creates and configures a JMenuBar for the ReminderCreateGUI.
+     * The menu bar contains a single menu item labeled "Help". When clicked,
+     * it displays a dialog box with helpful information about the application.
+     *
+     * @return The configured JMenuBar.
+     */
+    private JMenuBar getJMenuBar() {
+        JMenuBar menu = new JMenuBar();
+        // Add your menu items here
+        JMenuItem menuItem = new JMenuItem("Help");
+        menuItem.setToolTipText("Get help for the Application");
+        menuItem.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null,
+                    """
+                            This is a reminder app.
+                            Use date format (yyyy-MM-dd)
+                            Use time format (HH:mm)
+                            Use comma-separated notes (e.g., Task, Reminder, Due Date)
+                            Copyright 2025©. All rights reserved framedev
+                            """
+            );
+        });
+        menu.add(menuItem);
+        return menu;
+    }
+
     public static void main(String[] args) {
-        JFrame frame = new JFrame("ReminderCreateGUI");
+        frame = new JFrame("ReminderCreateGUI");
         frame.setContentPane(new ReminderCreateGUI().panel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
