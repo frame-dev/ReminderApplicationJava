@@ -1,7 +1,5 @@
 package ch.framedev;
 
-
-
 /*
  * ch.framedev
  * =============================================
@@ -92,6 +90,7 @@ public class Main {
             System.out.println("TrayIcon could not be added.");
             getLogger().error("TrayIcon could not be added.", e);
         }
+        // Load reminders from JSON file
         reminderManager = new ReminderManager();
 
         // Start the reminder scheduler to check for upcoming reminders
