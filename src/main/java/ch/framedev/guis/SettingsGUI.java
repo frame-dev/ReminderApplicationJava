@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.guis;
 
 
 
@@ -12,10 +12,9 @@ package ch.framedev;
  */
 
 import ch.framedev.database.DatabaseManager;
+import ch.framedev.main.Main;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * This class represents the graphical user interface for the application settings.

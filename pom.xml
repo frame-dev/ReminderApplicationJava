@@ -220,7 +220,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
-                                ch.framedev.Main
+                                ch.framedev.main.Main
                             </mainClass>
                         </manifest>
                     </archive>

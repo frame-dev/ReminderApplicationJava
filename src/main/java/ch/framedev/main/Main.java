@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.main;
 
 /*
  * ch.framedev
@@ -9,17 +9,24 @@ package ch.framedev;
  * This Class was created at 25.02.2025 18:17
  */
 
+import ch.framedev.classes.Reminder;
 import ch.framedev.database.DatabaseManager;
 import ch.framedev.database.IDatabase;
+import ch.framedev.guis.ReminderGUI;
+import ch.framedev.guis.ReminderView;
+import ch.framedev.guis.SettingsGUI;
 import ch.framedev.manager.Locale;
 import ch.framedev.manager.LocaleManager;
+import ch.framedev.manager.ReminderManager;
+import ch.framedev.manager.SettingsManager;
 import ch.framedev.simplejavautils.SimpleJavaUtils;
 import ch.framedev.simplejavautils.SystemUtils;
+import ch.framedev.utils.ReminderScheduler;
+import ch.framedev.utils.Setting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -31,8 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
     // initialization of the main class logger.
@@ -55,6 +60,7 @@ public class Main {
      * and starts the reminder scheduler.
      *
      * @param args Command-line arguments. Not used in this function.
+     * @throws IOException If an I/O error occurs while reading the tray icon image.
      * @throws MalformedURLException If the URL for the tray icon image is malformed.
      */
     public static void main(String[] args) throws IOException {

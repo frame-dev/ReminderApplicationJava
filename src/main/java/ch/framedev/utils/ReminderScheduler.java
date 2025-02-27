@@ -1,4 +1,7 @@
-package ch.framedev;
+package ch.framedev.utils;
+
+import ch.framedev.classes.Reminder;
+import ch.framedev.main.Main;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static ch.framedev.Main.reminderManager;
+import static ch.framedev.main.Main.reminderManager;
 
 public class ReminderScheduler {
     private final List<Reminder> reminders;

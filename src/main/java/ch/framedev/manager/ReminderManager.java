@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.manager;
 
 
 
@@ -11,7 +11,9 @@ package ch.framedev;
  * This Class was created at 25.02.2025 18:42
  */
 
+import ch.framedev.classes.Reminder;
 import ch.framedev.javajsonutils.JsonUtils;
+import ch.framedev.main.Main;
 import ch.framedev.simplejavautils.SimpleJavaUtils;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;

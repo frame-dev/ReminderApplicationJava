@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.classes;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -11,11 +11,14 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:45
  */
 
-import ch.framedev.Setting;
+import ch.framedev.utils.Setting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DatabaseManager {
 
     public static final String TABLE_NAME = "reminder_data";
+    public static Logger logger = LogManager.getLogger(DatabaseManager.class);
 
     private DatabaseType databaseType;
     private final IDatabase iDatabase;

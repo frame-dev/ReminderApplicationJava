@@ -11,7 +11,7 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:45
  */
 
-import ch.framedev.Reminder;
+import ch.framedev.classes.Reminder;
 
 import java.util.List;
 
@@ -22,5 +22,6 @@ public interface IDatabase {
     void deleteReminder(String title);
     Reminder getReminderByTitle(String title);
     List<Reminder> getAllReminders();
+    boolean notExistsReminder(String title);
     boolean existsReminder(String title);
 }

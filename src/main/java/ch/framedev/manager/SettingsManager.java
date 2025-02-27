@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.manager;
 
 
 
@@ -11,6 +11,7 @@ package ch.framedev;
  * This Class was created at 25.02.2025 23:09
  */
 
+import ch.framedev.main.Main;
 import ch.framedev.simplejavautils.SimpleJavaUtils;
 import ch.framedev.yamlutils.FileConfiguration;
 

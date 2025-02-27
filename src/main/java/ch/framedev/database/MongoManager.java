@@ -11,8 +11,8 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:46
  */
 
-import ch.framedev.Reminder;
-import ch.framedev.Setting;
+import ch.framedev.classes.Reminder;
+import ch.framedev.utils.Setting;
 import ch.framedev.javamongodbutils.BackendMongoDBManager;
 import ch.framedev.javamongodbutils.MongoDBManager;
 import org.bson.Document;
@@ -55,7 +55,7 @@ public class MongoManager implements IDatabase {
 
     @Override
     public Reminder getReminderByTitle(String title) {
-        if(!existsReminder(title)) return null;
+        if(notExistsReminder(title)) return null;
         return bMongoDBManager.getObjectFromJson("title", title, DatabaseManager.TABLE_NAME, Reminder.class);
     }
 
@@ -66,6 +66,11 @@ public class MongoManager implements IDatabase {
             reminders.add(bMongoDBManager.getObjectFromJson("_id", document.getObjectId("_id"), DatabaseManager.TABLE_NAME, Reminder.class));
         }
         return reminders;
+    }
+
+    @Override
+    public boolean notExistsReminder(String title) {
+        return !bMongoDBManager.exists("title", title, DatabaseManager.TABLE_NAME);
     }
 
     @Override

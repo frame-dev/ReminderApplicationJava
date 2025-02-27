@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.guis;
 
 
 
@@ -11,9 +11,10 @@ package ch.framedev;
  * This Class was created at 25.02.2025 18:58
  */
 
+import ch.framedev.classes.Reminder;
+import ch.framedev.main.Main;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ReminderView {
 

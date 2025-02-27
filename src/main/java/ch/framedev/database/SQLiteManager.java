@@ -11,16 +11,16 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:46
  */
 
-import ch.framedev.Main;
-import ch.framedev.Reminder;
-import ch.framedev.Setting;
+import ch.framedev.main.Main;
+import ch.framedev.classes.Reminder;
+import ch.framedev.utils.Setting;
 import ch.framedev.javasqliteutils.SQLite;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
-import static ch.framedev.Main.utils;
+import static ch.framedev.main.Main.utils;
 
 public class SQLiteManager implements IDatabase {
 
@@ -61,7 +61,7 @@ public class SQLiteManager implements IDatabase {
 
     @Override
     public void updateReminder(Reminder reminder) {
-        if (!existsReminder(reminder.getTitle())) return;
+        if (notExistsReminder(reminder.getTitle())) return;
         Object[] values = {
                 reminder.getTitle(),
                 reminder.getMessage(),
@@ -80,13 +80,14 @@ public class SQLiteManager implements IDatabase {
 
     @Override
     public Reminder getReminderByTitle(String title) {
-        if (!existsReminder(title)) return null;
+        if (notExistsReminder(title)) return null;
         Object[] values = SQLite.get(tableName, columns, "title", title).toArray();
         Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], List.of(((String) values[4]).split(", ")));
         reminder.setShow(values[5].toString().equalsIgnoreCase("0"));
         return reminder;
     }
 
+    @SuppressWarnings("resource")
     @Override
     public List<Reminder> getAllReminders() {
         List<Reminder> reminders = new ArrayList<>();
@@ -100,9 +101,14 @@ public class SQLiteManager implements IDatabase {
                 reminders.add(reminder);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            DatabaseManager.logger.error("Exception", ex);
         }
         return reminders;
+    }
+
+    @Override
+    public boolean notExistsReminder(String title) {
+        return !SQLite.exists(tableName, "title", title);
     }
 
     @Override

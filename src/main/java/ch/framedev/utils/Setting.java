@@ -1,4 +1,4 @@
-package ch.framedev;
+package ch.framedev.utils;
 
 
 
@@ -10,6 +10,8 @@ package ch.framedev;
  * =============================================
  * This Class was created at 25.02.2025 23:11
  */
+
+import ch.framedev.main.Main;
 
 import java.util.Map;
 import java.util.Optional;

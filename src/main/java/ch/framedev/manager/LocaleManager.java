@@ -11,7 +11,7 @@ package ch.framedev.manager;
  * This Class was created at 26.02.2025 22:16
  */
 
-import ch.framedev.Main;
+import ch.framedev.main.Main;
 import ch.framedev.yamlutils.FileConfiguration;
 
 import java.io.File;

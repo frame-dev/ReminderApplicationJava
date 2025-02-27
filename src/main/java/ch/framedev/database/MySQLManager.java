@@ -11,8 +11,8 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:45
  */
 
-import ch.framedev.Reminder;
-import ch.framedev.Setting;
+import ch.framedev.classes.Reminder;
+import ch.framedev.utils.Setting;
 import ch.framedev.javamysqlutils.MySQL;
 
 import java.sql.ResultSet;
@@ -62,7 +62,7 @@ public class MySQLManager implements IDatabase {
 
     @Override
     public void updateReminder(Reminder reminder) {
-        if (!existsReminder(reminder.getTitle())) return;
+        if (notExistsReminder(reminder.getTitle())) return;
         Object[] values = {
                 reminder.getTitle(),
                 reminder.getMessage(),
@@ -81,7 +81,7 @@ public class MySQLManager implements IDatabase {
 
     @Override
     public Reminder getReminderByTitle(String title) {
-        if (!existsReminder(title)) return null;
+        if (notExistsReminder(title)) return null;
         Object[] values = MySQL.get(tableName, columns, "title", title).toArray();
         Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], List.of(((String) values[4]).split(", ")));
         reminder.setShow(values[5].toString().equalsIgnoreCase("0"));
@@ -101,13 +101,18 @@ public class MySQLManager implements IDatabase {
                 reminders.add(reminder);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            DatabaseManager.logger.error("Exception", ex);
         }
         return reminders;
     }
 
     @Override
+    public boolean notExistsReminder(String title) {
+        return !MySQL.exists(tableName, "title", title);
+    }
+
+    @Override
     public boolean existsReminder(String title) {
-        return MySQL.exists(tableName, "title", title);
+        return !MySQL.exists(tableName, "title", title);
     }
 }
