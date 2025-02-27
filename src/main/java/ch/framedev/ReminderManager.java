@@ -38,18 +38,28 @@ public class ReminderManager {
      * If the JSON files do not exist or contain invalid data, empty lists are created.
      */
     public ReminderManager() {
-        Type type = new TypeToken<List<Reminder>>() {
-        }.getType();
-        Type deletedType = new TypeToken<List<Reminder>>() {
-        }.getType();
-        List<Reminder> loadedReminders = new JsonUtils().getTypeFromJsonFile(
-                new File(utils.getFilePath(Main.class), "reminders.json"), type
-        );
-        this.reminderList = (loadedReminders == null) ? new ArrayList<>() : loadedReminders;
-        List<Reminder> loadedDeletedReminders = new JsonUtils().getTypeFromJsonFile(
-                new File(utils.getFilePath(Main.class), "deleted_reminders.json"), deletedType
-        );
-        this.deletedReminderList = (loadedDeletedReminders == null) ? new ArrayList<>() : loadedDeletedReminders;
+        if (!Main.isDatabaseSupported()) {
+            Type type = new TypeToken<List<Reminder>>() {
+            }.getType();
+            Type deletedType = new TypeToken<List<Reminder>>() {
+            }.getType();
+            List<Reminder> loadedReminders = new JsonUtils().getTypeFromJsonFile(
+                    new File(utils.getFilePath(Main.class), "reminders.json"), type
+            );
+            this.reminderList = (loadedReminders == null) ? new ArrayList<>() : loadedReminders;
+            List<Reminder> loadedDeletedReminders = new JsonUtils().getTypeFromJsonFile(
+                    new File(utils.getFilePath(Main.class), "deleted_reminders.json"), deletedType
+            );
+            this.deletedReminderList = (loadedDeletedReminders == null) ? new ArrayList<>() : loadedDeletedReminders;
+        } else {
+            Type deletedType = new TypeToken<List<Reminder>>() {
+            }.getType();
+            List<Reminder> loadedDeletedReminders = new JsonUtils().getTypeFromJsonFile(
+                    new File(utils.getFilePath(Main.class), "deleted_reminders.json"), deletedType
+            );
+            this.deletedReminderList = (loadedDeletedReminders == null) ? new ArrayList<>() : loadedDeletedReminders;
+            this.reminderList = Main.getDatabaseManager().getIDatabase().getAllReminders();
+        }
     }
 
     /**
@@ -106,16 +116,23 @@ public class ReminderManager {
      * @return An Optional containing the Reminder if found, or an empty Optional if not found.
      */
     public Optional<Reminder> getReminderByTitle(String title) {
-        for (Reminder reminder : reminderList) {
-            if (reminder.getTitle().equalsIgnoreCase(title)) {
-                return Optional.of(reminder);
+        if (Main.isDatabaseSupported()) {
+            return Optional.ofNullable(Main.getDatabaseManager().getIDatabase().getReminderByTitle(title));
+        } else {
+            for (Reminder reminder : reminderList) {
+                if (reminder.getTitle().equalsIgnoreCase(title)) {
+                    return Optional.of(reminder);
+                }
             }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     public List<Reminder> getReminderList() {
-        return reminderList;
+        if (Main.isDatabaseSupported()) {
+            return Main.getDatabaseManager().getIDatabase().getAllReminders();
+        } else
+            return reminderList;
     }
 
     /**
@@ -136,9 +153,11 @@ public class ReminderManager {
             r.setDate(reminder.getDate());
             r.setTime(reminder.getTime());
             r.setNotes(reminder.getNotes());
-            saveReminders();
         });
-        saveReminders();
+        if (Main.isDatabaseSupported()) {
+            Main.getIDatabase().updateReminder(reminder);
+        } else
+            saveReminders();
     }
 
     /**
@@ -154,9 +173,14 @@ public class ReminderManager {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
 
-        Optional<Reminder> existingReminder = getReminderByTitle(title);
-        existingReminder.ifPresent(reminderList::remove);
-        saveReminders();
+        if (Main.isDatabaseSupported()) {
+            Main.getDatabaseManager().getIDatabase().deleteReminder(title);
+        } else {
+            reminderList.removeIf(r -> r.getTitle().equalsIgnoreCase(title));
+            Optional<Reminder> existingReminder = getReminderByTitle(title);
+            existingReminder.ifPresent(reminderList::remove);
+            saveReminders();
+        }
     }
 
     /**
@@ -168,7 +192,11 @@ public class ReminderManager {
      *                 message, date, and time.
      */
     public void addReminder(Reminder reminder) {
-        reminderList.add(reminder);
-        saveReminders();
+        if (Main.isDatabaseSupported()) {
+            Main.getDatabaseManager().getIDatabase().insertReminder(reminder);
+        } else {
+            reminderList.add(reminder);
+            saveReminders();
+        }
     }
 }

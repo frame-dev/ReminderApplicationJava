@@ -11,6 +11,9 @@ package ch.framedev;
  * This Class was created at 25.02.2025 23:11
  */
 
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * Represents a setting in the application.
  * Each setting has a unique key and can be retrieved, updated, or deleted.
@@ -20,7 +23,16 @@ public enum Setting {
     /**
      * The language setting.
      */
-    LANGUAGE("language");
+    LANGUAGE("language"),
+
+    USE_DATABASE("useDatabase"),
+    DATABASE_TYPE("database|databaseType"),
+    PREFERRED_DATABASE("database|preferred"),
+    MYSQL_CONNECTIONS("database|mysql"),
+    SQLITE_CONNECTIONS("database|sqlite"),
+    MONGODB_CONNECTIONS("database|mongodb");
+
+    final static Map<String, Object> data = Main.getSettingsManager().getData();
 
     final String key;
 
@@ -42,8 +54,22 @@ public enum Setting {
      *
      * @return the value of the setting, or null if the setting does not exist
      */
-    public Object getValue() {
-        return Main.getSettingsManager().getData().get(key);
+    @SuppressWarnings({"ReassignedVariable", "unchecked"})
+    public Optional<Object> getValue() {
+        String[] keyData = key.split("\\|");
+        Map<String, Object> currentMap = data;
+        Object value = null;
+
+        for (String keyDatum : keyData) {
+            if (currentMap == null) return Optional.empty();
+            value = currentMap.get(keyDatum);
+            if (value instanceof Map) {
+                currentMap = (Map<String, Object>) value;
+            } else {
+                return Optional.ofNullable(value);
+            }
+        }
+        return Optional.ofNullable(value);
     }
 
     /**
@@ -54,7 +80,7 @@ public enum Setting {
      * @return the value of the setting, or the default value if the setting does not exist
      */
     public Object getValue(Object defaultValue) {
-        return Main.getSettingsManager().getData().getOrDefault(key, defaultValue);
+        return getValue().orElse(defaultValue);
     }
 
     /**

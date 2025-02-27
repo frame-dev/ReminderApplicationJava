@@ -1,2 +1,21 @@
-# Supported languages (EN, DE)
-language: "EN"
+# Supported languages (en-EN, de-DE)
+language: "en-EN"
+useDatabase: false
+database:
+  databaseType: "NONE"
+  preferred: "mysql"
+  mysql:
+    host: "localhost"
+    port: 3306
+    username: "your_username"
+    password: "your_password"
+    database: "your_database"
+  sqlite:
+    path: "path"
+    database: "database.db"
+  mongodb:
+    host: "localhost"
+    port: 27017
+    username: "your_username"
+    password: "your_password"
+    database: "your_database"

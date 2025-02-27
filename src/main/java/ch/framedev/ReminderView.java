@@ -27,6 +27,9 @@ public class ReminderView {
     public static ReminderView reminderView;
 
     public static void init(Reminder reminder) {
+        if(reminderView == null) {
+            throw new NullPointerException("ReminderView not fully initialized");
+        }
         reminderView.reminderTitleTextField.setText(reminder.getTitle());
         reminderView.reminderTextArea.setText(reminder.reminderToString());
         frame.pack();

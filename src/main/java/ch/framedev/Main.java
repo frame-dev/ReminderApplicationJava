@@ -9,16 +9,27 @@ package ch.framedev;
  * This Class was created at 25.02.2025 18:17
  */
 
+import ch.framedev.database.DatabaseManager;
+import ch.framedev.database.IDatabase;
+import ch.framedev.manager.Locale;
+import ch.framedev.manager.LocaleManager;
 import ch.framedev.simplejavautils.SimpleJavaUtils;
 import ch.framedev.simplejavautils.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -34,6 +45,8 @@ public class Main {
     private static String lastNotificationTitle;
 
     private static SettingsManager settingsManager;
+    private static DatabaseManager databaseManager;
+    private static LocaleManager localeManager;
 
     /**
      * The main entry point of the Reminder Application.
@@ -44,37 +57,56 @@ public class Main {
      * @param args Command-line arguments. Not used in this function.
      * @throws MalformedURLException If the URL for the tray icon image is malformed.
      */
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws IOException {
         settingsManager = new SettingsManager();
+        databaseManager = new DatabaseManager();
 
-        System.setProperty("apple.awt.UIElement", "true");
+        setupLocaleFiles();
+        localeManager = new LocaleManager(Locale.getByCode(settingsManager.getConfiguration().getString("language")));
 
         // Check if SystemTray is supported
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
             return;
         }
+
         // Hide ConsoleWindow for Windows
         hideConsoleWindow();
-        Image image = Toolkit.getDefaultToolkit().getImage(utils.getFromResourceFile("images/tray-icon.png", Main.class).toURI().toURL());
+
+        // Get the allowed tray icon size
+        Dimension traySize = SystemTray.getSystemTray().getTrayIconSize();
+        System.out.println("Allowed Tray Icon Size: " + traySize.width + "x" + traySize.height);
+        int iconSize = traySize.width;  // Use the allowed max size
+
+        // Load high-resolution tray image
+        BufferedImage trayImage = ImageIO.read(utils.getFromResourceFile("images/tray-icon.png", Main.class));
+
+        // Scale the image correctly
+        BufferedImage resizedImage = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.drawImage(trayImage, 0, 0, iconSize, iconSize, null);
+        g2d.dispose();
+
+        // Enable High-DPI Scaling (Windows/Linux)
+        System.setProperty("sun.java2d.uiScale", "2.0");
 
         // Create a pop-up menu
         final PopupMenu popup = new PopupMenu();
-        trayIcon = new TrayIcon(image, "Reminder APP", popup);
+        trayIcon = new TrayIcon(resizedImage, "Reminder APP");
+        trayIcon.setImageAutoSize(true); // Ensures proper scaling
         final SystemTray systemTray = SystemTray.getSystemTray();
-        MenuItem menuItem = new MenuItem("Show Menu");
-        menuItem.addActionListener(e -> {
-            ReminderGUI.main(args);
-        });
+
+        MenuItem menuItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_MENU.getValue());
+        menuItem.addActionListener(e -> ReminderGUI.main(args));
         popup.add(menuItem);
 
-        MenuItem settingsMenu = new MenuItem("Settings");
-        settingsMenu.addActionListener(e -> {
-            SettingsGUI.main(args);
-        });
+        MenuItem settingsMenu = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_SETTINGS.getValue());
+        settingsMenu.addActionListener(e -> SettingsGUI.main(args));
         popup.add(settingsMenu);
 
-        MenuItem exitItem = new MenuItem("Exit");
+        MenuItem exitItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_EXIT.getValue());
         exitItem.addActionListener(e -> {
             reminderManager.saveReminders();
             System.exit(1);
@@ -85,11 +117,14 @@ public class Main {
 
         // Add the systemTray icon to the system systemTray
         try {
+            System.setProperty("apple.awt.UIElement", "true");
+            trayIcon.setPopupMenu(popup);
             systemTray.add(trayIcon);
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
             getLogger().error("TrayIcon could not be added.", e);
         }
+
         // Load reminders from JSON file
         reminderManager = new ReminderManager();
 
@@ -100,6 +135,43 @@ public class Main {
 
     public static Logger getLogger() {
         return logger;
+    }
+
+    private static void setupLocaleFiles() {
+        File localeDir = new File(utils.getFilePath(Main.class), "locales");
+        if (!localeDir.exists() && !localeDir.mkdirs()) {
+            getLogger().error("Failed to create locale directory: {}", localeDir.getAbsolutePath());
+            return;
+        }
+
+        String[] resourceLocales = {"locale_de-DE.yml", "locale_en-EN.yml"};
+
+        for (String resourceLocale : resourceLocales) {
+            File localeFile = new File(localeDir, resourceLocale);
+            try {
+                Path sourcePath = utils.getFromResourceFile("locales/" + resourceLocale, Main.class).toPath();
+                Files.copy(sourcePath, localeFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                getLogger().error("Error copying locale file: {}", resourceLocale, e);
+            }
+        }
+    }
+
+    public static LocaleManager getLocaleManager() {
+        return localeManager;
+    }
+
+    public static boolean isDatabaseSupported() {
+        if (!(boolean) Setting.USE_DATABASE.getValue(false)) return false;
+        return databaseManager.isDatabaseSupported();
+    }
+
+    public static IDatabase getIDatabase() {
+        return databaseManager.getIDatabase();
+    }
+
+    public static DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     /**

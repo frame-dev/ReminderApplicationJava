@@ -17,6 +17,8 @@ public class Reminder {
     private List<String> notes;
     private boolean show;
 
+    protected Reminder() {}
+
     /**
      * Constructs a new Reminder object with the given title and message.
      * The date, time, and notes are set to default values.
@@ -129,7 +131,7 @@ public class Reminder {
                 "Message: " + message + "\n" +
                 "Date: " + date + " " + time + "\n" +
                 "Notes: " + String.join(", ", notes) + "\n" +
-                "shown: " + show;
+                "show: " + show;
     }
 
     /**
@@ -155,7 +157,7 @@ public class Reminder {
                 notes = Arrays.asList(notesText.split(", "));
             }
         }
-        boolean show = Boolean.parseBoolean(parts[parts.length - 1].substring("shown: ".length()).trim());
+        boolean show = Boolean.parseBoolean(parts[parts.length - 1].substring("show: ".length()).trim());
         Reminder reminder = new Reminder(title, message, date, time, new ArrayList<>(notes));
         reminder.setShow(show);
         return reminder;

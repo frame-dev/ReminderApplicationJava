@@ -6,7 +6,9 @@
       <xy x="20" y="20" width="660" height="448"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="line" title="Notification Center">
+      <color color="-3615755"/>
+    </border>
     <children>
       <component id="d9b5d" class="javax.swing.JTextField" binding="reminderTitleTextField">
         <constraints>
