@@ -2,7 +2,11 @@ package ch.framedev.utils;
 
 import ch.framedev.classes.Reminder;
 import ch.framedev.main.Main;
+import javazoom.jl.player.Player;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -11,6 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static ch.framedev.main.Main.reminderManager;
+import static ch.framedev.main.Main.utils;
 
 public class ReminderScheduler {
     private final List<Reminder> reminders;
@@ -34,10 +39,25 @@ public class ReminderScheduler {
                 if (now.format(formatter).equals(reminderDateTime) && !reminder.isShow()) {
                     reminder.setShow(true);
                     sendNotification(reminder);
+                    playSoundAsync();
                     reminderManager.saveReminders();
                 }
             }
         }
+    }
+
+    public void playSoundAsync() {
+        new Thread(() -> {
+            try (FileInputStream fis = new FileInputStream(
+                    new File(utils.getFilePath(Main.class), "sounds/soft_bell_reminder.mp3"))) {
+                System.out.println("Starting sound...");
+                Player player = new Player(fis);
+                player.play(); // Blocks until done
+                System.out.println("Finished playing sound.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void sendNotification(Reminder reminder) {

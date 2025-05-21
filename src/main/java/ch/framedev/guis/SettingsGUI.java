@@ -15,6 +15,8 @@ import ch.framedev.database.DatabaseManager;
 import ch.framedev.main.Main;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This class represents the graphical user interface for the application settings.
@@ -27,6 +29,7 @@ public class SettingsGUI {
     private JPanel panel;
     private JCheckBox useDatabaseCheckBox;
     private JComboBox<String> databaseComboBox;
+    private JButton testSoundButton;
 
     public SettingsGUI() {
         useDatabaseCheckBox.setSelected(Main.getSettingsManager().getConfiguration().getBoolean("useDatabase"));
@@ -45,6 +48,9 @@ public class SettingsGUI {
             Main.getSettingsManager().getConfiguration().set("database.databaseType", DatabaseManager.DatabaseType.valueOf(databaseComboBox.getSelectedItem().toString()).name());
             Main.getSettingsManager().saveSettings();
             JOptionPane.showMessageDialog(null, "Please Restart Application");
+        });
+        testSoundButton.addActionListener(e -> {
+            Main.getReminderScheduler().playSoundAsync();
         });
     }
 

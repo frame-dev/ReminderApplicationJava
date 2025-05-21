@@ -29,11 +29,9 @@ import org.apache.logging.log4j.Logger;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -52,6 +50,7 @@ public class Main {
     private static SettingsManager settingsManager;
     private static DatabaseManager databaseManager;
     private static LocaleManager localeManager;
+    private static ReminderScheduler reminderScheduler;
 
     /**
      * The main entry point of the Reminder Application.
@@ -66,6 +65,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         settingsManager = new SettingsManager();
         databaseManager = new DatabaseManager();
+        createSounds();
 
         setupLocaleFiles();
         localeManager = new LocaleManager(Locale.getByCode(settingsManager.getConfiguration().getString("language")));
@@ -135,7 +135,7 @@ public class Main {
         reminderManager = new ReminderManager();
 
         // Start the reminder scheduler to check for upcoming reminders
-        ReminderScheduler reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
+        reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
         reminderScheduler.start();
     }
 
@@ -257,5 +257,55 @@ public class Main {
      */
     public static SettingsManager getSettingsManager() {
         return settingsManager;
+    }
+
+    private static void createSounds() {
+        File directory = new File(utils.getFilePath(Main.class), "sounds");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File soundFile = new File(directory, "soft_bell_reminder.mp3");
+        if(soundFile.exists()) soundFile.delete();
+        try (
+                InputStream inStream = Main.class.getResourceAsStream("/sounds/soft_bell_reminder.mp3");
+                OutputStream outStream = new FileOutputStream(soundFile)
+        ) {
+            if (inStream == null) {
+                throw new IOException("Resource not found: /sounds/soft_bell_reminder.mp3");
+            }
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = inStream.read(buffer)) > 0) {
+                outStream.write(buffer, 0, length);
+            }
+            System.out.println("File is copied successfully!");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void exportResourceToFile(String resourcePath, File destinationFile) {
+        // resourcePath should start with '/' for an absolute path in the JAR!
+        try (InputStream stream = Main.class.getResourceAsStream(resourcePath);
+             OutputStream resStreamOut = new FileOutputStream(destinationFile)) {
+
+            if (stream == null) {
+                throw new IOException("Cannot get resource \"" + resourcePath + "\" from Jar file.");
+            }
+
+            byte[] buffer = new byte[4096];
+            int readBytes;
+            while ((readBytes = stream.read(buffer)) > 0) {
+                resStreamOut.write(buffer, 0, readBytes);
+            }
+            System.out.println("Exported resource " + resourcePath + " to: " + destinationFile.getAbsolutePath() + " (" + destinationFile.length() + " bytes)");
+
+        } catch (IOException ex) {
+            throw new RuntimeException("Error copying resource " + resourcePath + " to " + destinationFile, ex);
+        }
+    }
+
+    public static ReminderScheduler getReminderScheduler() {
+        return reminderScheduler;
     }
 }
