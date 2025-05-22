@@ -20,6 +20,10 @@
             <id>framedev-repository</id>
             <url>https://repository.framedev.ch:444/releases</url>
         </repository>
+        <repository>
+            <id>jetbrains</id>
+            <url>https://www.jetbrains.com/intellij-repository/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
