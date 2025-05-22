@@ -31,7 +31,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -86,7 +85,8 @@ public class Main {
         try {
             trayIcon = createTrayIcon();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().error("TrayIcon could not be created.", e);
+            return;
         }
         final SystemTray systemTray = SystemTray.getSystemTray();
 
@@ -112,7 +112,6 @@ public class Main {
             trayIcon.setPopupMenu(popup);
             systemTray.add(trayIcon);
         } catch (AWTException e) {
-            System.out.println("TrayIcon could not be added.");
             getLogger().error("TrayIcon could not be added.", e);
         }
 
@@ -222,9 +221,8 @@ public class Main {
         // Create and return the TrayIcon
         return new TrayIcon(scaledImage, "Reminder Application");
     }
-
     /**
-     * Opens a dummy reminder window (replace with your actual UI).
+     * Opens the reminder window and initializes it with the last notification title.
      */
     private static void openReminderWindow() {
         System.out.println("Opening Reminder Details...");
@@ -269,10 +267,16 @@ public class Main {
     private static void createSounds() {
         File directory = new File(utils.getFilePath(Main.class), "sounds");
         if (!directory.exists()) {
-            directory.mkdirs();
+            if(!directory.mkdirs()) {
+                getLogger().error("Failed to create sounds directory: {}", directory.getAbsolutePath());
+                return;
+            }
         }
         File soundFile = new File(directory, "soft_bell_reminder.mp3");
-        if(soundFile.exists()) soundFile.delete();
+        if(soundFile.exists()) if(!soundFile.delete()) {
+            getLogger().error("Failed to delete existing sound file: {}", soundFile.getAbsolutePath());
+            return;
+        }
         try (
                 InputStream inStream = Main.class.getResourceAsStream("/sounds/soft_bell_reminder.mp3");
                 OutputStream outStream = new FileOutputStream(soundFile)
@@ -287,7 +291,7 @@ public class Main {
             }
             System.out.println("File is copied successfully!");
         } catch (Exception ex) {
-            ex.printStackTrace();
+            getLogger().error("Error copying sound file: {}", soundFile.getAbsolutePath(), ex);
         }
     }
 
@@ -305,10 +309,11 @@ public class Main {
             while ((readBytes = stream.read(buffer)) > 0) {
                 resStreamOut.write(buffer, 0, readBytes);
             }
-            System.out.println("Exported resource " + resourcePath + " to: " + destinationFile.getAbsolutePath() + " (" + destinationFile.length() + " bytes)");
+            resStreamOut.flush();
 
         } catch (IOException ex) {
-            throw new RuntimeException("Error copying resource " + resourcePath + " to " + destinationFile, ex);
+            System.err.println("Error exporting resource: " + ex.getMessage());
+            getLogger().error("Error exporting resource: {}", resourcePath, ex);
         }
     }
 

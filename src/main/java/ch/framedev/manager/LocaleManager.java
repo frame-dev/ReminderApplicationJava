@@ -16,9 +16,8 @@ import ch.framedev.yamlutils.FileConfiguration;
 
 import java.io.File;
 
-public class LocaleManager {
+public record LocaleManager(Locale locale) {
 
-    private final Locale locale;
     private static FileConfiguration fileConfiguration;
 
     public LocaleManager(Locale locale) {
@@ -31,10 +30,6 @@ public class LocaleManager {
 
     public String getString(String key) {
         return fileConfiguration.getString(key);
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     public static enum LocaleSetting {

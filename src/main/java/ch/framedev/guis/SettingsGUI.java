@@ -17,8 +17,6 @@ import ch.framedev.manager.Locale;
 import ch.framedev.manager.LocaleManager;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -53,8 +51,8 @@ public class SettingsGUI {
     private JTextField mongoDbPortTextField;
     private JTextField mongoDbUsernameTextField;
     private JTextField mongoDbDatabaseTextField;
-    private JPasswordField mongoDbpasswordField1;
-    private JComboBox<String> languageCombobox;
+    private JPasswordField mongoDbPasswordField1;
+    private JComboBox<String> languageComboBox;
     private JLabel databaseTypeLabel;
 
     public SettingsGUI() {
@@ -72,7 +70,7 @@ public class SettingsGUI {
         mongoDbHostNameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.host"), ""));
         mongoDbPortTextField.setText(String.valueOf(Main.getSettingsManager().getConfiguration().getInt("database.mongodb.port")));
         mongoDbUsernameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.username"), ""));
-        mongoDbpasswordField1.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.password"), ""));
+        mongoDbPasswordField1.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.password"), ""));
         mongoDbDatabaseTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.database"), ""));
 
         // Set the default database type based on the configuration
@@ -131,7 +129,7 @@ public class SettingsGUI {
                 String host = mongoDbHostNameTextField.getText();
                 String port = mongoDbPortTextField.getText();
                 String user = mongoDbUsernameTextField.getText();
-                String password = String.valueOf(mongoDbpasswordField1.getPassword());
+                String password = String.valueOf(mongoDbPasswordField1.getPassword());
                 String database = mongoDbDatabaseTextField.getText();
 
                 if(host.isEmpty() || port.isEmpty() || user.isEmpty() || password.isEmpty() || database.isEmpty()) {
@@ -151,11 +149,11 @@ public class SettingsGUI {
 
         // Set the default language based on the configuration
         for (Locale locale : Arrays.asList(Locale.ENGLISH, Locale.GERMAN))
-            languageCombobox.addItem(locale.getCode());
+            languageComboBox.addItem(locale.getCode());
 
-        languageCombobox.setSelectedItem(Main.getSettingsManager().getConfiguration().getString("language"));
-        languageCombobox.addActionListener(e -> {
-            String selectedLanguage = (String) languageCombobox.getSelectedItem();
+        languageComboBox.setSelectedItem(Main.getSettingsManager().getConfiguration().getString("language"));
+        languageComboBox.addActionListener(e -> {
+            String selectedLanguage = (String) languageComboBox.getSelectedItem();
             if (selectedLanguage == null) {
                 return;
             }
@@ -187,7 +185,7 @@ public class SettingsGUI {
             );
         });
 
-        // Add menu item to menu, and menu to menu bar
+        // Add menu item to the menu and menu to the menu bar
         helpMenu.add(helpItem);
         menuBar.add(helpMenu);
 

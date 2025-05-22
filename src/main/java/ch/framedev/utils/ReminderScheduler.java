@@ -4,12 +4,10 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.main.Main;
 import javazoom.jl.player.Player;
 
-import javax.sound.sampled.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -67,7 +65,8 @@ public class ReminderScheduler {
                 player.play(); // Blocks until done
                 System.out.println("Finished playing sound.");
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error playing sound: " + e.getMessage());
+                Main.getLogger().error("Error playing sound: {}", e.getMessage(), e);
             }
         }).start();
     }
