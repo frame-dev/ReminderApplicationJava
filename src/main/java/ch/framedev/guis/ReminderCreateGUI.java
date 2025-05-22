@@ -39,6 +39,7 @@ public class ReminderCreateGUI {
                     List.of(reminderNotesTextField.getText().split(", ")));
             Main.reminderManager.addReminder(reminder);
             ReminderGUI.reminderGUI.loadList();
+            JOptionPane.showMessageDialog(frame, "Reminder created successfully!");
         });
     }
 
@@ -50,11 +51,16 @@ public class ReminderCreateGUI {
      * @return The configured JMenuBar.
      */
     private JMenuBar getJMenuBar() {
-        JMenuBar menu = new JMenuBar();
-        // Add your menu items here
-        JMenuItem menuItem = new JMenuItem("Help");
-        menuItem.setToolTipText("Get help for the Application");
-        menuItem.addActionListener(e -> {
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create a top-level "Help" menu
+        JMenu helpMenu = new JMenu("Help");
+
+        // Create a menu item
+        JMenuItem helpItem = new JMenuItem("View Help");
+        helpItem.setToolTipText("Get help for the application (Ctrl+H)");
+        helpItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
+        helpItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(null,
                     """
                             This is a reminder app.
@@ -65,8 +71,12 @@ public class ReminderCreateGUI {
                             """
             );
         });
-        menu.add(menuItem);
-        return menu;
+
+        // Add menu item to menu, and menu to menu bar
+        helpMenu.add(helpItem);
+        menuBar.add(helpMenu);
+
+        return menuBar;
     }
 
     public static void main(String[] args) {

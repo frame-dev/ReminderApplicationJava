@@ -27,7 +27,7 @@ import static ch.framedev.main.Main.utils;
 public class SQLiteManager implements IDatabase {
 
     private final String tableName = DatabaseManager.TABLE_NAME;
-    private final String[] columns = {"title", "description", "date", "time", "notes", "show"};
+    private final String[] columns = {"title", "description", "date", "time", "notes", "displayed"};
 
     @SuppressWarnings({"unchecked", "InstantiationOfUtilityClass"})
     public SQLiteManager() {
@@ -40,10 +40,10 @@ public class SQLiteManager implements IDatabase {
         String[] columns = {
                 "title VARCHAR(255)",
                 "description VARCHAR(255)",
-                "date DATE",
-                "time TIME",
+                "date VARCHAR(255)",
+                "time VARCHAR(255)",
                 "notes VARCHAR(255)",
-                "`show` BOOLEAN"
+                "displayed BOOLEAN"
         };
         SQLite.createTable(tableName, true, columns);
     }
@@ -109,7 +109,7 @@ public class SQLiteManager implements IDatabase {
                 Reminder reminder = new Reminder(resultSet.getString("title"), resultSet.getString("description"),
                         resultSet.getString("date"), resultSet.getString("time"),
                         Arrays.asList(resultSet.getString("notes").split(", ")));
-                reminder.setShow(resultSet.getBoolean("show"));
+                reminder.setShow(resultSet.getBoolean("displayed"));
                 reminders.add(reminder);
             }
         } catch (Exception ex) {

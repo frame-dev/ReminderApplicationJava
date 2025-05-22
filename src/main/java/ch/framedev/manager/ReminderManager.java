@@ -71,6 +71,11 @@ public class ReminderManager {
      * @throws RuntimeException If an IOException occurs while saving the JSON file.
      */
     public void saveReminders() {
+        if(Main.isDatabaseSupported()) {
+            for(Reminder reminder : reminderList)
+                Main.getDatabaseManager().getIDatabase().updateReminder(reminder);
+            return;
+        }
         try {
             new JsonUtils().saveJsonToFile(new File(utils.getFilePath(Main.class), "reminders.json"), reminderList);
         } catch (IOException e) {

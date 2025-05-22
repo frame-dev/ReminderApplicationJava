@@ -131,12 +131,14 @@ public class Main {
             getLogger().error("TrayIcon could not be added.", e);
         }
 
-        // Load reminders from JSON file
+        // Load reminders from a JSON file
         reminderManager = new ReminderManager();
 
         // Start the reminder scheduler to check for upcoming reminders
         reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
         reminderScheduler.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> reminderScheduler.getScheduler().shutdown()));
     }
 
     public static Logger getLogger() {

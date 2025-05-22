@@ -26,6 +26,7 @@ import java.util.Objects;
  * @since 25.02.2025 22:05
  */
 public class SettingsGUI {
+    private static JFrame frame;
     private JPanel panel;
     private JCheckBox useDatabaseCheckBox;
     private JComboBox<String> databaseComboBox;
@@ -135,6 +136,36 @@ public class SettingsGUI {
                 JOptionPane.showMessageDialog(null, "Please select a database");
             }
         });
+        frame.setJMenuBar(getJMenuBar());
+    }
+
+    private JMenuBar getJMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create a top-level "Help" menu
+        JMenu helpMenu = new JMenu("Help");
+
+        // Create a menu item
+        JMenuItem helpItem = new JMenuItem("View Help");
+        helpItem.setToolTipText("Get help for the application (Ctrl+H)");
+        helpItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
+        helpItem.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null,
+                    """
+                            This is a reminder app.
+                            Use date format (yyyy-MM-dd)
+                            Use time format (HH:mm)
+                            Use comma-separated notes (e.g., Task, Reminder, Due Date)
+                            Copyright 2025©. All rights reserved framedev
+                            """
+            );
+        });
+
+        // Add menu item to menu, and menu to menu bar
+        helpMenu.add(helpItem);
+        menuBar.add(helpMenu);
+
+        return menuBar;
     }
 
     /**
@@ -143,7 +174,7 @@ public class SettingsGUI {
      * @param args Command line arguments (not used in this application).
      */
     public static void main(String[] args) {
-        JFrame frame = new JFrame("SettingsGUI");
+        frame = new JFrame("SettingsGUI");
         frame.setContentPane(new SettingsGUI().panel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setAlwaysOnTop(true);

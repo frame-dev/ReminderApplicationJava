@@ -26,7 +26,7 @@ public class ReminderScheduler {
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::checkReminders, 0, 30, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::checkReminders, 0, 10, TimeUnit.SECONDS);
     }
 
     private void checkReminders() {
@@ -35,8 +35,8 @@ public class ReminderScheduler {
 
         for (Reminder reminder : reminders) {
             if (reminder.getDate() != null && reminder.getTime() != null) {
-                String reminderDateTime = reminder.getDate() + " " + reminder.getTime();
-                if (now.format(formatter).equals(reminderDateTime) && !reminder.isShow()) {
+                LocalDateTime reminderDateTime = LocalDateTime.parse(reminder.getDate() + " " + reminder.getTime(), formatter);
+                if (!reminder.isShow() && !now.isBefore(reminderDateTime) && now.isBefore(reminderDateTime.plusMinutes(1))) {
                     reminder.setShow(true);
                     sendNotification(reminder);
                     playSoundAsync();
@@ -44,6 +44,10 @@ public class ReminderScheduler {
                 }
             }
         }
+    }
+
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
     }
 
     public void playSoundAsync() {

@@ -36,6 +36,7 @@ public class ReminderGUI {
                 if (e.getClickCount() == 2) {
                     ReminderView.main(new String[0]);
                     Reminder reminder = Main.reminderManager.getReminderByTitle(reminderList.getSelectedValue()).orElse(null);
+                    System.out.println(reminder);
                     if (reminder == null) {
                         System.out.println("Reminder not found!");
                         return;
@@ -47,6 +48,36 @@ public class ReminderGUI {
         createReminderButton.addActionListener(e -> {
             ReminderCreateGUI.main(new String[0]);
         });
+        frame.setJMenuBar(getJMenuBar());
+    }
+
+    private JMenuBar getJMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create a top-level "Help" menu
+        JMenu helpMenu = new JMenu("Help");
+
+        // Create a menu item
+        JMenuItem helpItem = new JMenuItem("View Help");
+        helpItem.setToolTipText("Get help for the application (Ctrl+H)");
+        helpItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
+        helpItem.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null,
+                    """
+                            This is a reminder app.
+                            Use date format (yyyy-MM-dd)
+                            Use time format (HH:mm)
+                            Use comma-separated notes (e.g., Task, Reminder, Due Date)
+                            Copyright 2025©. All rights reserved framedev
+                            """
+            );
+        });
+
+        // Add menu item to menu, and menu to menu bar
+        helpMenu.add(helpItem);
+        menuBar.add(helpMenu);
+
+        return menuBar;
     }
 
     /**
@@ -60,6 +91,10 @@ public class ReminderGUI {
                 .stream()
                 .map(Reminder::getTitle)
                 .toList(); // Java 16+ (Use .collect(Collectors.toList()) for older versions)
+        if (reminderTitles.isEmpty()) {
+            reminderList.setListData(new String[]{});
+            return;
+        }
         reminderList.setListData(reminderTitles.toArray(new String[0]));
     }
 
