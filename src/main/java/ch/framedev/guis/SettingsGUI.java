@@ -13,8 +13,13 @@ package ch.framedev.guis;
 
 import ch.framedev.database.DatabaseManager;
 import ch.framedev.main.Main;
+import ch.framedev.manager.Locale;
+import ch.framedev.manager.LocaleManager;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,8 +54,12 @@ public class SettingsGUI {
     private JTextField mongoDbUsernameTextField;
     private JTextField mongoDbDatabaseTextField;
     private JPasswordField mongoDbpasswordField1;
+    private JComboBox<String> languageCombobox;
+    private JLabel databaseTypeLabel;
 
     public SettingsGUI() {
+        databaseTypeLabel.setText(LocaleManager.LocaleSetting.DISPLAY_DATABASE_TYPE.getValue());
+
         mysqlHostNameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.host"), ""));
         mysqlPortTextField.setText(String.valueOf(Main.getSettingsManager().getConfiguration().getInt("database.mysql.port")));
         mysqlUserTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.username"), ""));
@@ -66,6 +75,8 @@ public class SettingsGUI {
         mongoDbpasswordField1.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.password"), ""));
         mongoDbDatabaseTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.database"), ""));
 
+        // Set the default database type based on the configuration
+        useDatabaseCheckBox.setText(LocaleManager.LocaleSetting.DISPLAY_USE_DATABASE.getValue());
         useDatabaseCheckBox.setSelected(Main.getSettingsManager().getConfiguration().getBoolean("useDatabase"));
         useDatabaseCheckBox.addActionListener(e -> {
             Main.getSettingsManager().getConfiguration().set("useDatabase", useDatabaseCheckBox.isSelected());
@@ -137,6 +148,21 @@ public class SettingsGUI {
             }
         });
         frame.setJMenuBar(getJMenuBar());
+
+        // Set the default language based on the configuration
+        for (Locale locale : Arrays.asList(Locale.ENGLISH, Locale.GERMAN))
+            languageCombobox.addItem(locale.getCode());
+
+        languageCombobox.setSelectedItem(Main.getSettingsManager().getConfiguration().getString("language"));
+        languageCombobox.addActionListener(e -> {
+            String selectedLanguage = (String) languageCombobox.getSelectedItem();
+            if (selectedLanguage == null) {
+                return;
+            }
+            Main.getSettingsManager().getConfiguration().set("language", selectedLanguage);
+            Main.getSettingsManager().saveSettings();
+            JOptionPane.showMessageDialog(null, "Please Restart Application");
+        });
     }
 
     private JMenuBar getJMenuBar() {

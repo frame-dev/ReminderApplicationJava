@@ -15,6 +15,7 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.main.Main;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReminderCreateGUI {
@@ -31,12 +32,17 @@ public class ReminderCreateGUI {
     public ReminderCreateGUI() {
         frame.setJMenuBar(getJMenuBar());
         createReminderButton.addActionListener(e -> {
+            String input = reminderNotesTextField.getText();
+            List<String> notes = Arrays.stream(input.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList(); // Java 16+, otherwise use .collect(Collectors.toList())
             Reminder reminder = new Reminder(
                     reminderTitleTextField.getText(),
                     reminderMessageTextField.getText(),
                     reminderDateTextField.getText(),
                     reminderTimeTextField.getText(),
-                    List.of(reminderNotesTextField.getText().split(", ")));
+                    notes);
             Main.reminderManager.addReminder(reminder);
             ReminderGUI.reminderGUI.loadList();
             JOptionPane.showMessageDialog(frame, "Reminder created successfully!");

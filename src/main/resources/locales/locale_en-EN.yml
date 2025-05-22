@@ -1,3 +1,5 @@
 displayMenu: "Show Menu"
 displaySettings: "Show Settings"
 exit: "Exit"
+useDatabase: "Use Database"
+databaseType: "Database Type"

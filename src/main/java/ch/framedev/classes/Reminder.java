@@ -117,6 +117,7 @@ public class Reminder {
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +
                 ", notes=" + notes +
+                ", show=" + show +
                 '}';
     }
 
@@ -154,7 +155,10 @@ public class Reminder {
         if (parts.length > 3) {
             String notesText = parts[3].substring("Notes: ".length()).trim();
             if (!notesText.isEmpty()) {
-                notes = Arrays.asList(notesText.split(", "));
+                notes = Arrays.stream(notesText.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toList(); // Java 16+, otherwise use .collect(Collectors.toList())
             }
         }
         boolean show = Boolean.parseBoolean(parts[parts.length - 1].substring("show: ".length()).trim());

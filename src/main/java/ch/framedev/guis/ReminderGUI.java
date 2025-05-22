@@ -36,7 +36,6 @@ public class ReminderGUI {
                 if (e.getClickCount() == 2) {
                     ReminderView.main(new String[0]);
                     Reminder reminder = Main.reminderManager.getReminderByTitle(reminderList.getSelectedValue()).orElse(null);
-                    System.out.println(reminder);
                     if (reminder == null) {
                         System.out.println("Reminder not found!");
                         return;

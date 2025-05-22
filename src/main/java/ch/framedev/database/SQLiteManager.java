@@ -15,7 +15,10 @@ import ch.framedev.main.Main;
 import ch.framedev.classes.Reminder;
 import ch.framedev.utils.Setting;
 import ch.framedev.javasqliteutils.SQLite;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +46,7 @@ public class SQLiteManager implements IDatabase {
                 "date VARCHAR(255)",
                 "time VARCHAR(255)",
                 "notes VARCHAR(255)",
-                "displayed BOOLEAN"
+                "displayed INTEGER"
         };
         SQLite.createTable(tableName, true, columns);
     }
@@ -65,8 +68,8 @@ public class SQLiteManager implements IDatabase {
                 reminder.getMessage(),
                 reminder.getDate(),
                 reminder.getTime(),
-                reminder.getNotes().toString(),
-                reminder.isShow()
+                new Gson().toJson(reminder.getNotes()),
+                reminder.isShow() ? 1 : 0
         };
         SQLite.insertData(tableName, values, columns);
     }
@@ -79,9 +82,10 @@ public class SQLiteManager implements IDatabase {
                 reminder.getMessage(),
                 reminder.getDate(),
                 reminder.getTime(),
-                reminder.getNotes().toString(),
-                reminder.isShow()
+                new Gson().toJson(reminder.getNotes()),
+                reminder.isShow() ? 1 : 0
         };
+        System.out.println(reminder);
         SQLite.updateData(tableName, columns, values, "title='" + reminder.getTitle() + "'");
     }
 
@@ -94,8 +98,8 @@ public class SQLiteManager implements IDatabase {
     public Reminder getReminderByTitle(String title) {
         if (notExistsReminder(title)) return null;
         Object[] values = SQLite.get(tableName, columns, "title", title).toArray();
-        Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], List.of(((String) values[4]).split(", ")));
-        reminder.setShow(values[5].toString().equalsIgnoreCase("0"));
+        Type type = new TypeToken<List<String>>() {}.getType();
+        Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], new Gson().fromJson((String) values[4], type));reminder.setShow(((int) values[5]) == 1);
         return reminder;
     }
 
@@ -106,10 +110,11 @@ public class SQLiteManager implements IDatabase {
         try (Statement statement = SQLite.connect().createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
             while (resultSet.next()) {
+                Type type = new TypeToken<List<String>>() {}.getType();
                 Reminder reminder = new Reminder(resultSet.getString("title"), resultSet.getString("description"),
                         resultSet.getString("date"), resultSet.getString("time"),
-                        Arrays.asList(resultSet.getString("notes").split(", ")));
-                reminder.setShow(resultSet.getBoolean("displayed"));
+                        new Gson().fromJson(resultSet.getString("notes"), type));
+                reminder.setShow(resultSet.getInt("displayed") == 1);
                 reminders.add(reminder);
             }
         } catch (Exception ex) {

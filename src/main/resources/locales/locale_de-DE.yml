@@ -1,3 +1,5 @@
 displayMenu: "Zeige Menu"
 displaySettings: "Zeige Einstellungen"
 exit: "Beenden"
+useDatabase: "Datenbank verwenden"
+databaseType: "Datenbanktyp"

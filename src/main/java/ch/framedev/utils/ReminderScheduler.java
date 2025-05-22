@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,7 +27,7 @@ public class ReminderScheduler {
     }
 
     public void start() {
-        scheduler.scheduleAtFixedRate(this::checkReminders, 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::checkReminders, 0, 1, TimeUnit.SECONDS);
     }
 
     private void checkReminders() {
@@ -36,11 +37,18 @@ public class ReminderScheduler {
         for (Reminder reminder : reminders) {
             if (reminder.getDate() != null && reminder.getTime() != null) {
                 LocalDateTime reminderDateTime = LocalDateTime.parse(reminder.getDate() + " " + reminder.getTime(), formatter);
-                if (!reminder.isShow() && !now.isBefore(reminderDateTime) && now.isBefore(reminderDateTime.plusMinutes(1))) {
+
+                if (reminderDateTime.isBefore(now.minusMinutes(1))) continue;
+
+                if (!reminder.isShow() && now.getYear() == reminderDateTime.getYear() &&
+                        now.getMonth() == reminderDateTime.getMonth() &&
+                        now.getDayOfMonth() == reminderDateTime.getDayOfMonth() &&
+                        now.getHour() == reminderDateTime.getHour() &&
+                        now.getMinute() == reminderDateTime.getMinute()) {
                     reminder.setShow(true);
                     sendNotification(reminder);
                     playSoundAsync();
-                    reminderManager.saveReminders();
+                    reminderManager.saveReminder(reminder);
                 }
             }
         }

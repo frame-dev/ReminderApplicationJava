@@ -72,7 +72,7 @@ public class ReminderManager {
      */
     public void saveReminders() {
         if(Main.isDatabaseSupported()) {
-            for(Reminder reminder : reminderList)
+            for (Reminder reminder : getReminderList())
                 Main.getDatabaseManager().getIDatabase().updateReminder(reminder);
             return;
         }
@@ -80,6 +80,15 @@ public class ReminderManager {
             new JsonUtils().saveJsonToFile(new File(utils.getFilePath(Main.class), "reminders.json"), reminderList);
         } catch (IOException e) {
             logger.error("Error saving reminders.json", e);
+        }
+    }
+
+    public void saveReminder(Reminder reminder) {
+        if (Main.isDatabaseSupported()) {
+            Main.getDatabaseManager().getIDatabase().updateReminder(reminder);
+        } else {
+            reminderList.add(reminder);
+            saveReminders();
         }
     }
 

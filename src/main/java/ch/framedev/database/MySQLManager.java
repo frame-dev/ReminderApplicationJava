@@ -14,7 +14,10 @@ package ch.framedev.database;
 import ch.framedev.classes.Reminder;
 import ch.framedev.utils.Setting;
 import ch.framedev.javamysqlutils.MySQL;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,7 +74,7 @@ public class MySQLManager implements IDatabase {
                 reminder.getMessage(),
                 reminder.getDate(),
                 reminder.getTime(),
-                reminder.getNotes().toString(),
+                new Gson().toJson(reminder.getNotes()),
                 reminder.isShow()
         };
         MySQL.insertData(tableName, values, columns);
@@ -85,7 +88,7 @@ public class MySQLManager implements IDatabase {
                 reminder.getMessage(),
                 reminder.getDate(),
                 reminder.getTime(),
-                reminder.getNotes().toString(),
+                new Gson().toJson(reminder.getNotes()),
                 reminder.isShow()
         };
         MySQL.updateData(tableName, columns, values, "title='" + reminder.getTitle() + "'");
@@ -100,7 +103,8 @@ public class MySQLManager implements IDatabase {
     public Reminder getReminderByTitle(String title) {
         if (notExistsReminder(title)) return null;
         Object[] values = MySQL.get(tableName, columns, "title", title).toArray();
-        Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], List.of(((String) values[4]).split(", ")));
+        Type type = new TypeToken<List<String>>() {}.getType();
+        Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], new Gson().fromJson((String) values[4], type));
         reminder.setShow(values[5].toString().equalsIgnoreCase("0"));
         return reminder;
     }
@@ -111,10 +115,11 @@ public class MySQLManager implements IDatabase {
         try (Statement statement = MySQL.getConnection().createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
             while (resultSet.next()) {
+                Type type = new TypeToken<List<String>>() {}.getType();
                 Reminder reminder = new Reminder(resultSet.getString("title"), resultSet.getString("description"),
                         resultSet.getString("date"), resultSet.getString("time"),
-                        Arrays.asList(resultSet.getString("notes").split(", ")));
-                reminder.setShow(resultSet.getBoolean("displayed"));
+                        new Gson().fromJson(resultSet.getString("notes"), type));
+                reminder.setShow(resultSet.getInt("displayed") == 1);
                 reminders.add(reminder);
             }
         } catch (Exception ex) {

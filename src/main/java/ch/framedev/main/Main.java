@@ -63,6 +63,8 @@ public class Main {
      * @throws MalformedURLException If the URL for the tray icon image is malformed.
      */
     public static void main(String[] args) throws IOException {
+        System.setProperty("apple.awt.UIElement", "true");
+        System.setProperty("sun.java2d.uiScale", "2.0");
         settingsManager = new SettingsManager();
         databaseManager = new DatabaseManager();
         createSounds();
@@ -79,29 +81,13 @@ public class Main {
         // Hide ConsoleWindow for Windows
         hideConsoleWindow();
 
-        // Get the allowed tray icon size
-        Dimension traySize = SystemTray.getSystemTray().getTrayIconSize();
-        System.out.println("Allowed Tray Icon Size: " + traySize.width + "x" + traySize.height);
-        int iconSize = traySize.width;  // Use the allowed max size
-
-        // Load high-resolution tray image
-        BufferedImage trayImage = ImageIO.read(utils.getFromResourceFile("images/tray-icon.png", Main.class));
-
-        // Scale the image correctly
-        BufferedImage resizedImage = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g2d.drawImage(trayImage, 0, 0, iconSize, iconSize, null);
-        g2d.dispose();
-
-        // Enable High-DPI Scaling (Windows/Linux)
-        System.setProperty("sun.java2d.uiScale", "2.0");
-
         // Create a pop-up menu
         final PopupMenu popup = new PopupMenu();
-        trayIcon = new TrayIcon(resizedImage, "Reminder APP");
-        trayIcon.setImageAutoSize(true); // Ensures proper scaling
+        try {
+            trayIcon = createTrayIcon();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         final SystemTray systemTray = SystemTray.getSystemTray();
 
         MenuItem menuItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_MENU.getValue());
@@ -123,7 +109,6 @@ public class Main {
 
         // Add the systemTray icon to the system systemTray
         try {
-            System.setProperty("apple.awt.UIElement", "true");
             trayIcon.setPopupMenu(popup);
             systemTray.add(trayIcon);
         } catch (AWTException e) {
@@ -138,7 +123,7 @@ public class Main {
         reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
         reminderScheduler.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> reminderScheduler.getScheduler().shutdown()));
+        // Runtime.getRuntime().addShutdownHook(new Thread(() -> reminderScheduler.getScheduler().shutdown()));
     }
 
     public static Logger getLogger() {
@@ -220,6 +205,22 @@ public class Main {
             if (trayIcon != null)
                 trayIcon.displayMessage(title, message, TrayIcon.MessageType.INFO);
         }
+    }
+
+    public static TrayIcon createTrayIcon() throws Exception {
+        // Load the icon from resources
+        InputStream is = Main.class.getResourceAsStream("/images/reminder_app_icon_256x256.png");
+        BufferedImage image = ImageIO.read(is);
+
+        // Get the system tray icon size
+        int trayIconWidth = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
+        int trayIconHeight = (int) SystemTray.getSystemTray().getTrayIconSize().getHeight();
+
+        // Scale the image
+        Image scaledImage = image.getScaledInstance(trayIconWidth, trayIconHeight, Image.SCALE_SMOOTH);
+
+        // Create and return the TrayIcon
+        return new TrayIcon(scaledImage, "Reminder Application");
     }
 
     /**

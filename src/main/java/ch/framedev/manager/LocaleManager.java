@@ -41,7 +41,9 @@ public class LocaleManager {
 
         DISPLAY_MENU("displayMenu"),
         DISPLAY_SETTINGS("displaySettings"),
-        DISPLAY_EXIT("exit");
+        DISPLAY_EXIT("exit"),
+        DISPLAY_USE_DATABASE("useDatabase"),
+        DISPLAY_DATABASE_TYPE("databaseType");
 
         final String key;
 
