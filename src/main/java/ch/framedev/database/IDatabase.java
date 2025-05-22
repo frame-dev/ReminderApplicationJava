@@ -14,8 +14,11 @@ package ch.framedev.database;
 import ch.framedev.classes.Reminder;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDatabase {
+
+    boolean testConnection(Map<String, Object> parameters);
 
     void insertReminder(Reminder reminder);
     void updateReminder(Reminder reminder);

@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class MongoManager implements IDatabase {
 
-    private final BackendMongoDBManager bMongoDBManager;
+    private BackendMongoDBManager bMongoDBManager;
 
     @SuppressWarnings("unchecked")
     public MongoManager() {
@@ -36,6 +36,19 @@ public class MongoManager implements IDatabase {
                 (String) mongoDbConnections.get("database"));
         mongoDBManager.connect();
         bMongoDBManager = new BackendMongoDBManager(mongoDBManager);
+    }
+
+    @Override
+    public boolean testConnection(Map<String, Object> parameters) {
+        MongoDBManager mongoDBManager = new MongoDBManager((String) parameters.get("host"),
+                (String) parameters.get("username"),
+                (String) parameters.get("password"),
+                (int) parameters.get("port"),
+                (String) parameters.get("database"));
+        mongoDBManager.connect();
+        bMongoDBManager = new BackendMongoDBManager(mongoDBManager);
+        Document result = mongoDBManager.getDatabase().runCommand(new Document("ping", 1));
+        return result.getDouble("ok") == 1.0;
     }
 
     @Override

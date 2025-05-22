@@ -50,7 +50,7 @@
         <dependency>
             <groupId>ch.framedev</groupId>
             <artifactId>JavaMySQLUtils</artifactId>
-            <version>1.0.4.2-TEST-RELEASE</version>
+            <version>1.0.4.6-PRE-RELEASE</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

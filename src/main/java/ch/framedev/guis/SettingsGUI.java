@@ -15,8 +15,8 @@ import ch.framedev.database.DatabaseManager;
 import ch.framedev.main.Main;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class represents the graphical user interface for the application settings.
@@ -30,8 +30,41 @@ public class SettingsGUI {
     private JCheckBox useDatabaseCheckBox;
     private JComboBox<String> databaseComboBox;
     private JButton testSoundButton;
+    private JPanel mysqlConnectionPanel;
+    private JLabel hostLabel;
+    private JTextField mysqlHostNameTextField;
+    private JTextField mysqlPortTextField;
+    private JTextField mysqlUserTextField;
+    private JPasswordField mysqlPasswordField;
+    private JTextField mysqlDatabaseTextField;
+    private JButton testConnectionButton;
+    private JPanel sqlitePanel;
+    private JTextField sqlitePathTextField;
+    private JTextField sqliteDatabaseTextField;
+    private JPanel mongodbConnectionPanel;
+    private JPanel connections;
+    private JTextField mongoDbHostNameTextField;
+    private JTextField mongoDbPortTextField;
+    private JTextField mongoDbUsernameTextField;
+    private JTextField mongoDbDatabaseTextField;
+    private JPasswordField mongoDbpasswordField1;
 
     public SettingsGUI() {
+        mysqlHostNameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.host"), ""));
+        mysqlPortTextField.setText(String.valueOf(Main.getSettingsManager().getConfiguration().getInt("database.mysql.port")));
+        mysqlUserTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.username"), ""));
+        mysqlPasswordField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.password"), ""));
+        mysqlDatabaseTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mysql.database"), ""));
+
+        sqlitePathTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.sqlite.path"), ""));
+        sqliteDatabaseTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.sqlite.database"), ""));
+
+        mongoDbHostNameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.host"), ""));
+        mongoDbPortTextField.setText(String.valueOf(Main.getSettingsManager().getConfiguration().getInt("database.mongodb.port")));
+        mongoDbUsernameTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.username"), ""));
+        mongoDbpasswordField1.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.password"), ""));
+        mongoDbDatabaseTextField.setText(Objects.requireNonNullElse(Main.getSettingsManager().getConfiguration().getString("database.mongodb.database"), ""));
+
         useDatabaseCheckBox.setSelected(Main.getSettingsManager().getConfiguration().getBoolean("useDatabase"));
         useDatabaseCheckBox.addActionListener(e -> {
             Main.getSettingsManager().getConfiguration().set("useDatabase", useDatabaseCheckBox.isSelected());
@@ -51,6 +84,56 @@ public class SettingsGUI {
         });
         testSoundButton.addActionListener(e -> {
             Main.getReminderScheduler().playSoundAsync();
+        });
+        testConnectionButton.addActionListener(e -> {
+            if(((String) databaseComboBox.getSelectedItem()).equalsIgnoreCase("MySQL")) {
+                String host = mysqlHostNameTextField.getText();
+                String port = mysqlPortTextField.getText();
+                String user = mysqlUserTextField.getText();
+                String password = String.valueOf(mysqlPasswordField.getPassword());
+                String database = mysqlDatabaseTextField.getText();
+
+                if(host.isEmpty() || port.isEmpty() || user.isEmpty() || password.isEmpty() || database.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all fields");
+                    return;
+                }
+                Map<String, Object> parameters = Map.of("host", host, "port", Integer.parseInt(port), "username", user, "password", password, "database", database);
+                Main.getSettingsManager().getConfiguration().set("database.mysql", parameters);
+                Main.getSettingsManager().saveSettings();
+                Main.setDatabaseManager(new DatabaseManager());
+                Main.getDatabaseManager().getIDatabase().testConnection(parameters);
+            } else if(((String) databaseComboBox.getSelectedItem()).equalsIgnoreCase("SQLite")) {
+                String path = sqlitePathTextField.getText();
+                String database = sqliteDatabaseTextField.getText();
+
+                if(path.isEmpty() || database.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all fields");
+                    return;
+                }
+                Map<String, Object> parameters = Map.of("path", path, "database", database);
+                Main.getSettingsManager().getConfiguration().set("database.sqlite", parameters);
+                Main.getSettingsManager().saveSettings();
+                Main.setDatabaseManager(new DatabaseManager());
+                Main.getDatabaseManager().getIDatabase().testConnection(parameters);
+            } else if(((String) databaseComboBox.getSelectedItem()).equalsIgnoreCase("MongoDB")) {
+                String host = mongoDbHostNameTextField.getText();
+                String port = mongoDbPortTextField.getText();
+                String user = mongoDbUsernameTextField.getText();
+                String password = String.valueOf(mongoDbpasswordField1.getPassword());
+                String database = mongoDbDatabaseTextField.getText();
+
+                if(host.isEmpty() || port.isEmpty() || user.isEmpty() || password.isEmpty() || database.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all fields");
+                    return;
+                }
+                Map<String, Object> parameters = Map.of("host", host, "port", Integer.parseInt(port), "username", user, "password", password, "database", database);
+                Main.getSettingsManager().getConfiguration().set("database.mongodb", parameters);
+                Main.getSettingsManager().saveSettings();
+                Main.setDatabaseManager(new DatabaseManager());
+                Main.getDatabaseManager().getIDatabase().testConnection(parameters);
+            } else {
+                JOptionPane.showMessageDialog(null, "Please select a database");
+            }
         });
     }
 

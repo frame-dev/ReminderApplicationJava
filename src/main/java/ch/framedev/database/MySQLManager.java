@@ -15,7 +15,9 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.utils.Setting;
 import ch.framedev.javamysqlutils.MySQL;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
@@ -37,14 +39,29 @@ public class MySQLManager implements IDatabase {
 
     private void createTable() {
         String[] columns = {
-                "title TEXT(255)",
-                "description TEXT(255)",
-                "date TEXT",
-                "time TEXT",
-                "notes TEXT(255)",
-                "show BOOLEAN"
+                "title VARCHAR(255)",
+                "description VARCHAR(255)",
+                "date DATE",
+                "time TIME",
+                "notes VARCHAR(255)",
+                "`show` BOOLEAN"
         };
         MySQL.createTable(tableName, columns);
+    }
+
+    @Override
+    public boolean testConnection(Map<String, Object> parameters) {
+        new MySQL.Builder()
+                .host((String) parameters.get("host"))
+                .port((int) parameters.get("port"))
+                .user((String) parameters.get("username"))
+                .password((String) parameters.get("password"))
+                .database((String) parameters.get("database"));
+        try {
+            return MySQL.getConnection().isValid(300);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

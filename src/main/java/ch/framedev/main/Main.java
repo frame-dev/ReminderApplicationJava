@@ -180,6 +180,10 @@ public class Main {
         return databaseManager;
     }
 
+    public static void setDatabaseManager(DatabaseManager databaseManager) {
+        Main.databaseManager = databaseManager;
+    }
+
     /**
      * Displays a system tray notification and stores the title.
      */

@@ -16,7 +16,9 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.utils.Setting;
 import ch.framedev.javasqliteutils.SQLite;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
@@ -36,14 +38,24 @@ public class SQLiteManager implements IDatabase {
 
     private void createTable() {
         String[] columns = {
-                "title TEXT(255)",
-                "description TEXT(255)",
-                "date TEXT",
-                "time TEXT",
-                "notes TEXT(255)",
-                "show BOOLEAN"
+                "title VARCHAR(255)",
+                "description VARCHAR(255)",
+                "date DATE",
+                "time TIME",
+                "notes VARCHAR(255)",
+                "`show` BOOLEAN"
         };
         SQLite.createTable(tableName, true, columns);
+    }
+
+    @Override
+    public boolean testConnection(Map<String, Object> parameters) {
+        new SQLite(utils.getFilePath(Main.class) + parameters.get("path"), parameters.get("database").toString());
+        try(Connection connection = SQLite.connect()) {
+            return connection.isValid(3);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
