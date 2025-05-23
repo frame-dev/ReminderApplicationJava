@@ -101,7 +101,7 @@ public class Main {
         MenuItem exitItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_EXIT.getValue());
         exitItem.addActionListener(e -> {
             reminderManager.saveReminders();
-            System.exit(1);
+            System.exit(0);
         });
         popup.add(exitItem);
 
@@ -206,21 +206,31 @@ public class Main {
         }
     }
 
-    public static TrayIcon createTrayIcon() throws Exception {
-        // Load the icon from resources
-        InputStream is = Main.class.getResourceAsStream("/images/reminder_app_icon_256x256.png");
-        BufferedImage image = ImageIO.read(is);
-
-        // Get the system tray icon size
-        int trayIconWidth = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
-        int trayIconHeight = (int) SystemTray.getSystemTray().getTrayIconSize().getHeight();
-
-        // Scale the image
-        Image scaledImage = image.getScaledInstance(trayIconWidth, trayIconHeight, Image.SCALE_SMOOTH);
-
-        // Create and return the TrayIcon
-        return new TrayIcon(scaledImage, "Reminder Application");
+    private static Image getScaledImage(BufferedImage srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        return resizedImg;
     }
+
+    public static TrayIcon createTrayIcon() throws Exception {
+        final String TRAY_ICON_PATH = "/images/reminder_app_icon_256x256.png";
+        try (InputStream is = Main.class.getResourceAsStream(TRAY_ICON_PATH)) {
+            BufferedImage image = ImageIO.read(is);
+            if (image == null) {
+                throw new IOException("Tray icon image not found!");
+            }
+            int trayIconWidth = (int) SystemTray.getSystemTray().getTrayIconSize().getWidth();
+            int trayIconHeight = (int) SystemTray.getSystemTray().getTrayIconSize().getHeight();
+            Image scaledImage = getScaledImage(image, trayIconWidth, trayIconHeight);
+            TrayIcon trayIcon = new TrayIcon(scaledImage, "Reminder Application");
+            trayIcon.setImageAutoSize(true); // Optional, but safe
+            return trayIcon;
+        }
+    }
+    
     /**
      * Opens the reminder window and initializes it with the last notification title.
      */

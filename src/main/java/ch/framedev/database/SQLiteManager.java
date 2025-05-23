@@ -85,7 +85,6 @@ public class SQLiteManager implements IDatabase {
                 new Gson().toJson(reminder.getNotes()),
                 reminder.isShow() ? 1 : 0
         };
-        System.out.println(reminder);
         SQLite.updateData(tableName, columns, values, "title='" + reminder.getTitle() + "'");
     }
 
