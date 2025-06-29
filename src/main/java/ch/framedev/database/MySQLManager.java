@@ -12,8 +12,8 @@ package ch.framedev.database;
  */
 
 import ch.framedev.classes.Reminder;
+import ch.framedev.javamysqlutils.MySQLV2;
 import ch.framedev.utils.Setting;
-import ch.framedev.javamysqlutils.MySQL;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,11 +27,12 @@ public class MySQLManager implements IDatabase {
 
     private final String tableName = DatabaseManager.TABLE_NAME;
     private final String[] columns = {"title", "description", "date", "time", "notes", "displayed"};
+    private MySQLV2 mySQLV2;
 
     @SuppressWarnings("unchecked")
     public MySQLManager() {
-        Map<String, Object> mysqlConnections = (Map<String, Object>) Setting.MYSQL_CONNECTIONS.getValue(new HashMap<>());
-        new MySQL((String) mysqlConnections.get("host"),
+        Map<String, Object> mysqlConnections = (Map<String, Object>) Setting.MYSQL_CONNECTIONS.getValue().orElse(new HashMap<>());
+        mySQLV2 = new MySQLV2((String) mysqlConnections.get("host"),
                 (String) mysqlConnections.get("username"),
                 (String) mysqlConnections.get("password"),
                 (Integer) mysqlConnections.get("port"),
@@ -48,19 +49,19 @@ public class MySQLManager implements IDatabase {
                 "notes VARCHAR(255)",
                 "displayed BOOLEAN"
         };
-        MySQL.createTable(tableName, columns);
+        mySQLV2.createTable(tableName, columns);
     }
 
     @Override
     public boolean testConnection(Map<String, Object> parameters) {
-        new MySQL.Builder()
+        mySQLV2 = new MySQLV2.Builder()
                 .host((String) parameters.get("host"))
                 .port((int) parameters.get("port"))
                 .user((String) parameters.get("username"))
                 .password((String) parameters.get("password"))
-                .database((String) parameters.get("database"));
+                .database((String) parameters.get("database")).build();
         try {
-            return MySQL.getConnection().isValid(300);
+            return mySQLV2.getConnection().isValid(300);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +77,7 @@ public class MySQLManager implements IDatabase {
                 new Gson().toJson(reminder.getNotes()),
                 reminder.isShow()
         };
-        MySQL.insertData(tableName, values, columns);
+        mySQLV2.insertData(tableName, values, columns);
     }
 
     @Override
@@ -90,18 +91,18 @@ public class MySQLManager implements IDatabase {
                 new Gson().toJson(reminder.getNotes()),
                 reminder.isShow()
         };
-        MySQL.updateData(tableName, columns, values, "title='" + reminder.getTitle() + "'");
+        mySQLV2.updateData(tableName, columns, values, "title='" + reminder.getTitle() + "'");
     }
 
     @Override
     public void deleteReminder(String title) {
-        MySQL.deleteDataInTable(tableName, "title='" + title + "'");
+        mySQLV2.deleteDataInTable(tableName, "title='" + title + "'");
     }
 
     @Override
     public Reminder getReminderByTitle(String title) {
         if (notExistsReminder(title)) return null;
-        Object[] values = MySQL.get(tableName, columns, "title", title).toArray();
+        Object[] values = mySQLV2.get(tableName, columns, "title", title).toArray();
         Type type = new TypeToken<List<String>>() {}.getType();
         Reminder reminder = new Reminder((String) values[0], (String) values[1], (String) values[2], (String) values[3], new Gson().fromJson((String) values[4], type));
         reminder.setShow(values[5].toString().equalsIgnoreCase("0"));
@@ -111,7 +112,7 @@ public class MySQLManager implements IDatabase {
     @Override
     public List<Reminder> getAllReminders() {
         List<Reminder> reminders = new ArrayList<>();
-        try (Statement statement = MySQL.getConnection().createStatement();
+        try (Statement statement = mySQLV2.getConnection().createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
             while (resultSet.next()) {
                 Type type = new TypeToken<List<String>>() {}.getType();
@@ -129,11 +130,11 @@ public class MySQLManager implements IDatabase {
 
     @Override
     public boolean notExistsReminder(String title) {
-        return !MySQL.exists(tableName, "title", title);
+        return !mySQLV2.exists(tableName, "title", title);
     }
 
     @Override
     public boolean existsReminder(String title) {
-        return !MySQL.exists(tableName, "title", title);
+        return !mySQLV2.exists(tableName, "title", title);
     }
 }

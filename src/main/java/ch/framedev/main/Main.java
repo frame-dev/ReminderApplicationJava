@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -77,6 +78,15 @@ public class Main {
             return;
         }
 
+        if(Desktop.isDesktopSupported()) {
+            JOptionPane.showMessageDialog(null,
+                    """
+                            This Application lives in the system tray.
+                            You can open it by clicking on the tray icon.
+                            To exit the application, click on the tray icon and select 'Exit'.
+                            """);
+        }
+
         // Hide ConsoleWindow for Windows
         hideConsoleWindow();
 
@@ -111,6 +121,8 @@ public class Main {
         try {
             trayIcon.setPopupMenu(popup);
             systemTray.add(trayIcon);
+            trayIcon.setToolTip("Reminder Application");
+            System.out.println("TrayIcon added to system tray.");
         } catch (AWTException e) {
             getLogger().error("TrayIcon could not be added.", e);
         }
@@ -154,7 +166,7 @@ public class Main {
     }
 
     public static boolean isDatabaseSupported() {
-        if (!(boolean) Setting.USE_DATABASE.getValue(false)) return false;
+        if (!(boolean) Setting.USE_DATABASE.getValue().orElse(false)) return false;
         return databaseManager.isDatabaseSupported();
     }
 
@@ -215,10 +227,26 @@ public class Main {
         return resizedImg;
     }
 
-    public static TrayIcon createTrayIcon() throws Exception {
+    public static void copyTrayIconToFile(File destinationFile) throws IOException {
         final String TRAY_ICON_PATH = "/images/reminder_app_icon_256x256.png";
-        try (InputStream is = Main.class.getResourceAsStream(TRAY_ICON_PATH)) {
-            BufferedImage image = ImageIO.read(is);
+        try (InputStream is = Main.class.getResourceAsStream(TRAY_ICON_PATH);
+             OutputStream os = new FileOutputStream(destinationFile)) {
+            if (is == null) {
+                throw new IOException("Tray icon image not found in resources!");
+            }
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+        }
+    }
+
+    public static TrayIcon createTrayIcon() throws Exception {
+        copyTrayIconToFile(new File(utils.getFilePath(Main.class) + "reminder_app_icon_256x256.png"));
+        try (InputStream is = new FileInputStream(new File(utils.getFilePath(Main.class) + "reminder_app_icon_256x256.png"))) {
+            BufferedImage image;
+            image = ImageIO.read(is);
             if (image == null) {
                 throw new IOException("Tray icon image not found!");
             }

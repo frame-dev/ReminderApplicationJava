@@ -36,7 +36,7 @@ public class ReminderScheduler {
             if (reminder.getDate() != null && reminder.getTime() != null) {
                 LocalDateTime reminderDateTime = LocalDateTime.parse(reminder.getDate() + " " + reminder.getTime(), formatter);
 
-                if (reminderDateTime.isBefore(now.minusMinutes(1))) continue;
+                // if (reminderDateTime.isBefore(now.minusMinutes(1))) continue;
 
                 if (!reminder.isShow() && now.getYear() == reminderDateTime.getYear() &&
                         now.getMonth() == reminderDateTime.getMonth() &&

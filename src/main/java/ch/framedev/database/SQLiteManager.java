@@ -34,7 +34,7 @@ public class SQLiteManager implements IDatabase {
 
     @SuppressWarnings({"unchecked", "InstantiationOfUtilityClass"})
     public SQLiteManager() {
-        Map<String, Object> sqliteConnections = (Map<String, Object>) Setting.SQLITE_CONNECTIONS.getValue(new HashMap<>());
+        Map<String, Object> sqliteConnections = (Map<String, Object>) Setting.SQLITE_CONNECTIONS.getValue().orElse(new HashMap<>());
         new SQLite(utils.getFilePath(Main.class) + sqliteConnections.get("path"), sqliteConnections.get("database").toString());
         createTable();
     }
@@ -53,6 +53,7 @@ public class SQLiteManager implements IDatabase {
 
     @Override
     public boolean testConnection(Map<String, Object> parameters) {
+        //noinspection InstantiationOfUtilityClass
         new SQLite(utils.getFilePath(Main.class) + parameters.get("path"), parameters.get("database").toString());
         try(Connection connection = SQLite.connect()) {
             return connection.isValid(3);
@@ -102,7 +103,6 @@ public class SQLiteManager implements IDatabase {
         return reminder;
     }
 
-    @SuppressWarnings("resource")
     @Override
     public List<Reminder> getAllReminders() {
         List<Reminder> reminders = new ArrayList<>();
