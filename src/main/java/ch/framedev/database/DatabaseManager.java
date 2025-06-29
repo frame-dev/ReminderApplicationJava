@@ -39,6 +39,10 @@ public class DatabaseManager {
             default:
                 iDatabase = null;
         }
+
+        if(iDatabase != null && isDatabaseSupported()) {
+            logger.info("Database type set to: {}", databaseType);
+        }
     }
 
     public DatabaseType getDatabaseType() {

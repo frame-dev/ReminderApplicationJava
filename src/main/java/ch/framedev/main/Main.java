@@ -35,6 +35,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -133,6 +135,37 @@ public class Main {
         // Start the reminder scheduler to check for upcoming reminders
         reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
         reminderScheduler.start();
+
+        if(isDatabaseSupported()) {
+            getLogger().info("Database is supported. Initializing database connection...");
+            if(databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> sqliteConnections = (Map<String, Object>) Setting.SQLITE_CONNECTIONS.getValue().orElse(new HashMap<>());
+                if(databaseManager.getIDatabase().testConnection(sqliteConnections)) {
+                    getLogger().info("SQLite connection successful.");
+                } else {
+                    getLogger().error("SQLite connection failed. Please check your settings.");
+                }
+            } else if(databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.MYSQL) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> mysqlConnections = (Map<String, Object>) Setting.MYSQL_CONNECTIONS.getValue().orElse(new HashMap<>());
+                if(databaseManager.getIDatabase().testConnection(mysqlConnections)) {
+                    getLogger().info("MySQL connection successful.");
+                } else {
+                    getLogger().error("MySQL connection failed. Please check your settings.");
+                }
+            } else if(databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.MONGODB) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> mongoDbConnections = (Map<String, Object>) Setting.MONGODB_CONNECTIONS.getValue().orElse(new HashMap<>());
+                if(databaseManager.getIDatabase().testConnection(mongoDbConnections)) {
+                    getLogger().info("MongoDB connection successful.");
+                } else {
+                    getLogger().error("MongoDB connection failed. Please check your settings.");
+                }
+            }
+        } else {
+            getLogger().warn("Database is not supported or not enabled in settings.");
+        }
 
         // Runtime.getRuntime().addShutdownHook(new Thread(() -> reminderScheduler.getScheduler().shutdown()));
     }

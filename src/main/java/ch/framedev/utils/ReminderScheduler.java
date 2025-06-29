@@ -34,19 +34,19 @@ public class ReminderScheduler {
 
         for (Reminder reminder : reminders) {
             if (reminder.getDate() != null && reminder.getTime() != null) {
-                LocalDateTime reminderDateTime = LocalDateTime.parse(reminder.getDate() + " " + reminder.getTime(), formatter);
+                try {
+                    LocalDateTime reminderDateTime = LocalDateTime.parse(reminder.getDate() + " " + reminder.getTime(), formatter);
 
-                // if (reminderDateTime.isBefore(now.minusMinutes(1))) continue;
-
-                if (!reminder.isShow() && now.getYear() == reminderDateTime.getYear() &&
-                        now.getMonth() == reminderDateTime.getMonth() &&
-                        now.getDayOfMonth() == reminderDateTime.getDayOfMonth() &&
-                        now.getHour() == reminderDateTime.getHour() &&
-                        now.getMinute() == reminderDateTime.getMinute()) {
-                    reminder.setShow(true);
-                    sendNotification(reminder);
-                    playSoundAsync();
-                    reminderManager.saveReminder(reminder);
+                    if (!reminder.isShow()
+                        && reminderDateTime.isBefore(now.plusSeconds(5))
+                        && !reminderDateTime.isBefore(now.minusMinutes(1))) {
+                        reminder.setShow(true);
+                        sendNotification(reminder);
+                        playSoundAsync();
+                        reminderManager.saveReminder(reminder);
+                    }
+                } catch (Exception e) {
+                    Main.getLogger().error("Error parsing reminder date/time: {}", e.getMessage(), e);
                 }
             }
         }

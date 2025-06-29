@@ -2,6 +2,7 @@
 language: "en-EN"
 useDatabase: false
 database:
+  # Options: "NONE", "MYSQL", "SQLITE", "MONGODB"
   databaseType: "NONE"
   preferred: "mysql"
   mysql:
