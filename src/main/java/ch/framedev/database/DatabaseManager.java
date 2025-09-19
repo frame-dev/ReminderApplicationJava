@@ -24,8 +24,10 @@ public class DatabaseManager {
     private final IDatabase iDatabase;
 
     public DatabaseManager() {
+        // Initialize the database type from settings, defaulting to NONE if not set
         this.databaseType = DatabaseType.valueOf((String) Setting.DATABASE_TYPE.getValue("NONE"));
 
+        // Initialize the database manager based on the configured database type
         switch (databaseType) {
             case SQLITE:
                 iDatabase = new SQLiteManager();
@@ -40,6 +42,7 @@ public class DatabaseManager {
                 iDatabase = null;
         }
 
+        // Log the database type if a database instance is created
         if(iDatabase != null && isDatabaseSupported()) {
             logger.info("Database type set to: {}", databaseType);
         }
@@ -62,6 +65,9 @@ public class DatabaseManager {
         this.databaseType = databaseType;
     }
 
+    /**
+     * Enum representing the supported database types.
+     */
     public static enum DatabaseType {
         SQLITE,
         MYSQL,

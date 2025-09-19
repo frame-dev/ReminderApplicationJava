@@ -79,7 +79,8 @@ public class Main {
             System.out.println("SystemTray is not supported");
             return;
         }
-
+        
+        // Show a message dialog if the application is running on Desktop
         if(Desktop.isDesktopSupported()) {
             JOptionPane.showMessageDialog(null,
                     """
@@ -98,6 +99,11 @@ public class Main {
             trayIcon = createTrayIcon();
         } catch (Exception e) {
             getLogger().error("TrayIcon could not be created.", e);
+            return;
+        }
+        // Create the SystemTray variable
+        if (trayIcon == null) {
+            getLogger().error("TrayIcon is null. Cannot proceed.");
             return;
         }
         final SystemTray systemTray = SystemTray.getSystemTray();
