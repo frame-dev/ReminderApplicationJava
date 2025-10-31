@@ -181,7 +181,7 @@ public class Main {
                 }
             }
         } else {
-            getLogger().warn("Database is not supported or not enabled in settings.");
+            getLogger().warn("Database is not supported or not enabled in settings. Using local storage only.");
         }
 
         // Runtime.getRuntime().addShutdownHook(new Thread(() -> reminderScheduler.getScheduler().shutdown()));

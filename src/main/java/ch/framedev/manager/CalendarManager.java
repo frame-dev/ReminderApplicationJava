@@ -82,7 +82,7 @@ public class CalendarManager {
         }
         if (Main.isDatabaseSupported()) {
             try {
-                Main.getDatabaseManager().getIDatabaseCalendar().insertCalendarEntry(entry);
+                Main.getIDatabaseCalendar().insertCalendarEntry(entry);
             } catch (Exception ex) {
                 logger.warn("Failed to insert calendar entry into database: {}", ex.getMessage());
             }
@@ -108,7 +108,7 @@ public class CalendarManager {
         }
         if (Main.isDatabaseSupported()) {
             try {
-                Main.getDatabaseManager().getIDatabaseCalendar().deleteCalendarEntry(entry.getCalendarId());
+                Main.getIDatabaseCalendar().deleteCalendarEntry(entry.getCalendarId());
             } catch (Exception ex) {
                 logger.warn("Failed to delete calendar entry from database: {}", ex.getMessage());
             }
@@ -120,7 +120,7 @@ public class CalendarManager {
         if (entry == null) return;
         if (Main.isDatabaseSupported() && getCalendarEntryById(entry.getCalendarId()) != null) {
             try {
-                Main.getDatabaseManager().getIDatabaseCalendar().updateCalendarEntry(entry);
+                Main.getIDatabaseCalendar().updateCalendarEntry(entry);
             } catch (Exception ex) {
                 logger.warn("Failed to update calendar entry in database: {}", ex.getMessage());
             }
