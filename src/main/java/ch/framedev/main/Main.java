@@ -129,6 +129,7 @@ public class Main {
         MenuItem exitItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_EXIT.getValue());
         exitItem.addActionListener(e -> {
             reminderManager.saveReminders();
+            logger.info("Exiting application...");
             System.exit(0);
         });
         popup.add(exitItem);
