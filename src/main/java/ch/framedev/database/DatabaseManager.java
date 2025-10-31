@@ -18,10 +18,12 @@ import org.apache.logging.log4j.Logger;
 public class DatabaseManager {
 
     public static final String TABLE_NAME = "reminder_data";
+    public static final String CALENDAR_TABLE_NAME = "calendar_data";
     public static Logger logger = LogManager.getLogger(DatabaseManager.class);
 
     private DatabaseType databaseType;
     private final IDatabase iDatabase;
+    private final IDatabaseCalendar iDatabaseCalendar;
 
     public DatabaseManager() {
         // Initialize the database type from settings, defaulting to NONE if not set
@@ -30,16 +32,25 @@ public class DatabaseManager {
         // Initialize the database manager based on the configured database type
         switch (databaseType) {
             case SQLITE:
-                iDatabase = new SQLiteManager();
+                SQLiteManager sqliteManager = new SQLiteManager();
+                this.iDatabase = sqliteManager;
+                this.iDatabaseCalendar = sqliteManager;
                 break;
             case MYSQL:
-                iDatabase = new MySQLManager();
+                MySQLManager mySQLManager = new MySQLManager();
+                this.iDatabase = mySQLManager;
+                this.iDatabaseCalendar = mySQLManager;
                 break;
             case MONGODB:
-                iDatabase = new MongoManager();
+                MongoManager mongoDBManager = new MongoManager();
+                this.iDatabase = mongoDBManager;
+                this.iDatabaseCalendar = mongoDBManager;
                 break;
             default:
                 iDatabase = null;
+                iDatabaseCalendar = null;
+                logger.warn("No valid database type configured. Database functionalities will be disabled.");
+                break;
         }
 
         // Log the database type if a database instance is created
@@ -54,6 +65,10 @@ public class DatabaseManager {
 
     public IDatabase getIDatabase() {
         return iDatabase;
+    }
+
+    public IDatabaseCalendar getIDatabaseCalendar() {
+        return iDatabaseCalendar;
     }
 
     public boolean isDatabaseSupported() {

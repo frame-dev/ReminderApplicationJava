@@ -12,13 +12,11 @@ package ch.framedev.main;
 import ch.framedev.classes.Reminder;
 import ch.framedev.database.DatabaseManager;
 import ch.framedev.database.IDatabase;
+import ch.framedev.database.IDatabaseCalendar;
 import ch.framedev.guis.ReminderGUI;
 import ch.framedev.guis.ReminderView;
 import ch.framedev.guis.SettingsGUI;
-import ch.framedev.manager.Locale;
-import ch.framedev.manager.LocaleManager;
-import ch.framedev.manager.ReminderManager;
-import ch.framedev.manager.SettingsManager;
+import ch.framedev.manager.*;
 import ch.framedev.simplejavautils.SimpleJavaUtils;
 import ch.framedev.simplejavautils.SystemUtils;
 import ch.framedev.utils.ReminderScheduler;
@@ -53,6 +51,7 @@ public class Main {
     private static DatabaseManager databaseManager;
     private static LocaleManager localeManager;
     private static ReminderScheduler reminderScheduler;
+    private static CalendarManager calendarManager;
 
     /**
      * The main entry point of the Reminder Application.
@@ -142,6 +141,8 @@ public class Main {
         reminderScheduler = new ReminderScheduler(reminderManager.getReminderList());
         reminderScheduler.start();
 
+        calendarManager = new CalendarManager();
+
         if(isDatabaseSupported()) {
             getLogger().info("Database is supported. Initializing database connection...");
             if(databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
@@ -213,12 +214,20 @@ public class Main {
         return databaseManager.getIDatabase();
     }
 
+    public static IDatabaseCalendar getIDatabaseCalendar() {
+        return databaseManager.getIDatabaseCalendar();
+    }
+
     public static DatabaseManager getDatabaseManager() {
         return databaseManager;
     }
 
     public static void setDatabaseManager(DatabaseManager databaseManager) {
         Main.databaseManager = databaseManager;
+    }
+
+    public static CalendarManager getCalendarManager() {
+        return calendarManager;
     }
 
     /**

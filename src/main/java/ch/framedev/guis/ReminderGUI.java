@@ -15,6 +15,8 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.main.Main;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -26,6 +28,7 @@ public class ReminderGUI {
     private JList<String> reminderList;
     private JScrollPane reminderScrollPane;
     private JButton createReminderButton;
+    private JButton openCalendarButton;
     public static ReminderGUI reminderGUI;
 
     public ReminderGUI() {
@@ -48,6 +51,9 @@ public class ReminderGUI {
             ReminderCreateGUI.main(new String[0]);
         });
         frame.setJMenuBar(getJMenuBar());
+        openCalendarButton.addActionListener(e -> {
+            CalendarGUI.main(new String[0]);
+        });
     }
 
     private JMenuBar getJMenuBar() {

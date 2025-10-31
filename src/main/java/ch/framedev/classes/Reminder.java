@@ -1,5 +1,7 @@
 package ch.framedev.classes;
 
+import org.bson.Document;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +47,15 @@ public class Reminder {
         this.date = date;
         this.time = time;
         this.notes = (notes != null) ? notes : new ArrayList<>();
+    }
+
+    public Reminder(Document document) {
+        this.title = document.getString("title");
+        this.message = document.getString("message");
+        this.date = document.getString("date");
+        this.time = document.getString("time");
+        this.notes = document.getList("notes", String.class, new ArrayList<>());
+        this.show = document.getBoolean("show", false);
     }
 
     public String getTitle() {
@@ -187,6 +198,15 @@ public class Reminder {
                 Objects.equals(notes, reminder.notes) &&
                 Objects.equals(hashCode(), reminder.hashCode()) &&
                 show == reminder.show;
+    }
+
+    public Document toDocument() {
+        return new Document("title", title)
+                .append("message", message)
+                .append("date", date)
+                .append("time", time)
+                .append("notes", notes)
+                .append("show", show);
     }
 
     /**

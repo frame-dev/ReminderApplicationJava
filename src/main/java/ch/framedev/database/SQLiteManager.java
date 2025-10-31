@@ -11,6 +11,7 @@ package ch.framedev.database;
  * This Class was created at 26.02.2025 19:46
  */
 
+import ch.framedev.classes.CalendarEntry;
 import ch.framedev.main.Main;
 import ch.framedev.classes.Reminder;
 import ch.framedev.utils.Setting;
@@ -27,10 +28,12 @@ import java.util.*;
 
 import static ch.framedev.main.Main.utils;
 
-public class SQLiteManager implements IDatabase {
+@SuppressWarnings("resource")
+public class SQLiteManager implements IDatabase, IDatabaseCalendar {
 
     private final String tableName = DatabaseManager.TABLE_NAME;
     private final String[] columns = {"title", "description", "date", "time", "notes", "displayed"};
+    private final String[] calendarColumns = {"calendarId", "title", "date", "fromDate", "toDate", "time", "fromTime", "toTime", "description"};
 
     @SuppressWarnings({"unchecked", "InstantiationOfUtilityClass"})
     public SQLiteManager() {
@@ -49,6 +52,18 @@ public class SQLiteManager implements IDatabase {
                 "displayed INTEGER"
         };
         SQLite.createTable(tableName, true, columns);
+        String[] calendarColumns = {
+                "calendarId VARCHAR(255) PRIMARY KEY",
+                "title VARCHAR(255)",
+                "date VARCHAR(255)",
+                "fromDate VARCHAR(255)",
+                "toDate VARCHAR(255)",
+                "time VARCHAR(255)",
+                "fromTime VARCHAR(255)",
+                "toTime VARCHAR(255)",
+                "description VARCHAR(255)"
+        };
+        SQLite.createTable(DatabaseManager.CALENDAR_TABLE_NAME, true, calendarColumns);
     }
 
     @Override
@@ -60,6 +75,102 @@ public class SQLiteManager implements IDatabase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean insertCalendarEntry(CalendarEntry calendarEntry) {
+        Object[] values = {
+                calendarEntry.getCalendarId(),
+                calendarEntry.getTitle(),
+                calendarEntry.getDate(),
+                calendarEntry.getFromDate(),
+                calendarEntry.getToDate(),
+                calendarEntry.getTime(),
+                calendarEntry.getFromTime(),
+                calendarEntry.getToTime(),
+                calendarEntry.getDescription()
+        };
+        return SQLite.insertData(DatabaseManager.CALENDAR_TABLE_NAME, values, calendarColumns);
+    }
+
+    @Override
+    public boolean updateCalendarEntry(CalendarEntry calendarEntry) {
+        Object[] values = {
+                calendarEntry.getCalendarId(),
+                calendarEntry.getTitle(),
+                calendarEntry.getDate(),
+                calendarEntry.getFromDate(),
+                calendarEntry.getToDate(),
+                calendarEntry.getTime(),
+                calendarEntry.getFromTime(),
+                calendarEntry.getToTime(),
+                calendarEntry.getDescription()
+        };
+        return SQLite.updateData(DatabaseManager.CALENDAR_TABLE_NAME, calendarColumns, values, "calendarId='" + calendarEntry.getCalendarId() + "'");
+    }
+
+    @Override
+    public boolean deleteCalendarEntry(String calendarId) {
+        return SQLite.deleteDataInTable(DatabaseManager.CALENDAR_TABLE_NAME, "calendarId='" + calendarId + "'");
+    }
+
+    @Override
+    public CalendarEntry getCalendarEntryById(String calendarId) {
+        Object[] values = SQLite.get(DatabaseManager.CALENDAR_TABLE_NAME, calendarColumns, "calendarId", calendarId).toArray();
+        return new CalendarEntry((String) values[1], (String) values[8], (String) values[2], (String) values[3], (String) values[4]);
+    }
+
+    @Override
+    public List<CalendarEntry> getAllCalendarEntries() {
+        List<CalendarEntry> calendarEntries = new ArrayList<>();
+        try (Statement statement = SQLite.connect().createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + DatabaseManager.CALENDAR_TABLE_NAME)) {
+            while (resultSet.next()) {
+                CalendarEntry calendarEntry = new CalendarEntry(
+                        resultSet.getString("title"),
+                        resultSet.getString("description"),
+                        resultSet.getString("date"),
+                        resultSet.getString("fromDate"),
+                        resultSet.getString("toDate")
+                );
+                calendarEntry.setTime(resultSet.getString("time"));
+                calendarEntry.setFromTime(resultSet.getString("fromTime"));
+                calendarEntry.setToTime(resultSet.getString("toTime"));
+                calendarEntries.add(calendarEntry);
+            }
+        } catch (Exception ex) {
+            DatabaseManager.logger.error("Exception", ex);
+        }
+        return calendarEntries;
+    }
+
+    @Override
+    public List<CalendarEntry> getCalendarEntriesByDate(String date) {
+        List<CalendarEntry> calendarEntries = new ArrayList<>();
+        try (Statement statement = SQLite.connect().createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + DatabaseManager.CALENDAR_TABLE_NAME + " WHERE date='" + date + "'")) {
+            while (resultSet.next()) {
+                CalendarEntry calendarEntry = new CalendarEntry(
+                        resultSet.getString("title"),
+                        resultSet.getString("description"),
+                        resultSet.getString("date"),
+                        resultSet.getString("fromDate"),
+                        resultSet.getString("toDate")
+                );
+                calendarEntry.setTime(resultSet.getString("time"));
+                calendarEntry.setFromTime(resultSet.getString("fromTime"));
+                calendarEntry.setToTime(resultSet.getString("toTime"));
+                calendarEntries.add(calendarEntry);
+            }
+        } catch (Exception ex) {
+            DatabaseManager.logger.error("Exception", ex);
+        }
+        return calendarEntries;
+    }
+
+    @Override
+    public boolean existsCalendarEntry(String calendarId) {
+        return SQLite.exists(DatabaseManager.CALENDAR_TABLE_NAME, "calendarId", calendarId);
     }
 
     @Override
