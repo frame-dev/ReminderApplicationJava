@@ -9,6 +9,7 @@ A Java-based desktop application for managing reminders and tasks, built with a 
 - Reminder management system
 - Audio notifications (using JLayer)
 - Logging system (Log4j2)
+- Calendar integration
 
 ## Requirements
 

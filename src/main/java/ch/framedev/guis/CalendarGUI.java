@@ -1,5 +1,7 @@
 package ch.framedev.guis;
 
+import ch.framedev.manager.LocaleManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +16,7 @@ public class CalendarGUI extends JFrame {
 
     public CalendarGUI() {
         currentMonth = YearMonth.now();
-        setTitle("Calendar");
+        setTitle(LocaleManager.LocaleSetting.CALENDAR_MAIN_TITLE.getValue("Calendar"));
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);

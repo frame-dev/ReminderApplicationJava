@@ -13,6 +13,7 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.database.DatabaseManager;
 import ch.framedev.database.IDatabase;
 import ch.framedev.database.IDatabaseCalendar;
+import ch.framedev.guis.CalendarGUI;
 import ch.framedev.guis.ReminderGUI;
 import ch.framedev.guis.ReminderView;
 import ch.framedev.guis.SettingsGUI;
@@ -40,6 +41,8 @@ public class Main {
 
     // initialization of the main class logger.
     private final static Logger logger = LogManager.getLogger(Main.class);
+
+    private static final boolean skip = true;
 
     public static SimpleJavaUtils utils = new SimpleJavaUtils();
     public static TrayIcon trayIcon;
@@ -80,7 +83,7 @@ public class Main {
         }
         
         // Show a message dialog if the application is running on Desktop
-        if(Desktop.isDesktopSupported()) {
+        if(Desktop.isDesktopSupported() && !skip) {
             JOptionPane.showMessageDialog(null,
                     """
                             This Application lives in the system tray.
@@ -101,10 +104,6 @@ public class Main {
             return;
         }
         // Create the SystemTray variable
-        if (trayIcon == null) {
-            getLogger().error("TrayIcon is null. Cannot proceed.");
-            return;
-        }
         final SystemTray systemTray = SystemTray.getSystemTray();
 
         MenuItem menuItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_MENU.getValue());
@@ -114,6 +113,17 @@ public class Main {
         MenuItem settingsMenu = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_SETTINGS.getValue());
         settingsMenu.addActionListener(e -> SettingsGUI.main(args));
         popup.add(settingsMenu);
+
+        MenuItem calendarItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_CALENDAR.getValue());
+        calendarItem.addActionListener(e -> {
+            try {
+                CalendarGUI calendarGUI = new CalendarGUI();
+                calendarGUI.requestFocus();
+            } catch (Exception ex) {
+                getLogger().error("Failed to open Calendar GUI.", ex);
+            }
+        });
+        popup.add(calendarItem);
 
         MenuItem exitItem = new MenuItem(LocaleManager.LocaleSetting.DISPLAY_EXIT.getValue());
         exitItem.addActionListener(e -> {

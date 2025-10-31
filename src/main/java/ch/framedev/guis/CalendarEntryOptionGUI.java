@@ -38,6 +38,7 @@ public class CalendarEntryOptionGUI extends JFrame {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
         JButton addBtn = new JButton("Add");
         JButton editBtn = new JButton("Edit");
+        JButton deleteBtn = new JButton("Delete");
         JButton closeBtn = new JButton("Close");
 
         editBtn.setEnabled(false);
@@ -65,8 +66,20 @@ public class CalendarEntryOptionGUI extends JFrame {
             editBtn.setEnabled(!eventList.isSelectionEmpty());
         });
 
+        deleteBtn.addActionListener(e -> {
+            if(eventList.isSelectionEmpty()) return;
+            if(model.isEmpty()) return;
+            if(eventList.getSelectedValue() == null) return;
+            CalendarEntry entry = getSelectedEntry(date, eventList.getSelectedValue());
+            if(entry == null) return;
+            Main.getCalendarManager().deleteCalendarEntry(entry);
+            model.removeElement(eventList.getSelectedValue());
+            JOptionPane.showMessageDialog(null, "Calendar entry deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        });
+
         btnPanel.add(addBtn);
         btnPanel.add(editBtn);
+        btnPanel.add(deleteBtn);
         btnPanel.add(closeBtn);
         main.add(btnPanel, BorderLayout.SOUTH);
     }
@@ -83,6 +96,7 @@ public class CalendarEntryOptionGUI extends JFrame {
     }
 
     private void fillList(DefaultListModel<String> model, LocalDate date) {
+        model.clear();
         List<CalendarEntry> entries = Main.getCalendarManager().getCalendarEntriesByDate(date.toString());
         for (CalendarEntry entry : entries) {
             model.addElement(entry.getTitle() + " - " + entry.getTime());

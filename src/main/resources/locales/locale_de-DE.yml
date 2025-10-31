@@ -1,5 +1,8 @@
 displayMenu: "Zeige Menu"
 displaySettings: "Zeige Einstellungen"
+displayCalendar: "Zeige Kalender"
 exit: "Beenden"
 useDatabase: "Datenbank verwenden"
 databaseType: "Datenbanktyp"
+calendar:
+  main: "Kalender"

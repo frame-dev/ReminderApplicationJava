@@ -1,5 +1,8 @@
 displayMenu: "Show Menu"
 displaySettings: "Show Settings"
+displayCalendar: "Show Calendar"
 exit: "Exit"
 useDatabase: "Use Database"
 databaseType: "Database Type"
+calendar:
+  main: "Calendar"

@@ -66,6 +66,12 @@ public class CalendarManager {
             } catch (IOException e) {
                 logger.error("Failed to save calendar entries to JSON file: {}", e.getMessage(), e);
             }
+            try {
+                new JsonUtils().saveJsonToFile(
+                        new File(utils.getFilePath(Main.class), "deleted_calendar_entries.json"), deletedCalendarEntries);
+            } catch (IOException e) {
+                logger.error("Failed to save deleted calendar entries to JSON file: {}", e.getMessage(), e);
+            }
         }
     }
 
