@@ -54,7 +54,25 @@ public class LocaleManager {
         DISPLAY_EXIT("exit"),
         DISPLAY_USE_DATABASE("useDatabase"),
         DISPLAY_DATABASE_TYPE("databaseType"),
-        CALENDAR_MAIN_TITLE("calendar|main");
+        CALENDAR_MAIN_TITLE("calendar|main"),
+        CALENDAR_ENTRY_GUI_FRAME_TITLE_ADD("calendar|entryGui|frameTitle"),
+        CALENDAR_ENTRY_GUI_FRAME_TITLE_EDIT("calendar|entryGui|frameTitleEdit"),
+        CALENDAR_ENTRY_GUI_DATE("calendar|entryGui|date"),
+        CALENDAR_ENTRY_GUI_TITLE("calendar|entryGui|title"),
+        CALENDAR_ENTRY_GUI_DESCRIPTION("calendar|entryGui|description"),
+        CALENDAR_ENTRY_GUI_TIME("calendar|entryGui|time"),
+        CALENDAR_ENTRY_GUI_FROM_DATE("calendar|entryGui|fromDate"),
+        CALENDAR_ENTRY_GUI_TO_DATE("calendar|entryGui|toDate"),
+        CALENDAR_ENTRY_GUI_FROM_TIME("calendar|entryGui|fromTime"),
+        CALENDAR_ENTRY_GUI_TO_TIME("calendar|entryGui|toTime"),
+        CALENDAR_ENTRY_GUI_SAVE_BUTTON("calendar|entryGui|saveButton"),
+        CALENDAR_ENTRY_GUI_CANCEL_BUTTON("calendar|entryGui|cancelButton"),
+        CALENDAR_ENTRY_GUI_EMPTY("calendar|entryGui|empty"),
+        CALENDAR_ENTRY_OPTION_GUI_TITLE("calendar|entryOptionGui|title"),
+        CALENDAR_ENTRY_OPTION_GUI_ADD_BUTTON("calendar|entryOptionGui|addButton"),
+        CALENDAR_ENTRY_OPTION_GUI_EDIT_BUTTON("calendar|entryOptionGui|editButton"),
+        CALENDAR_ENTRY_OPTION_GUI_DELETE_BUTTON("calendar|entryOptionGui|deleteButton"),
+        CALENDAR_ENTRY_OPTION_GUI_BACK_BUTTON("calendar|entryOptionGui|backButton");
 
         final String key;
 

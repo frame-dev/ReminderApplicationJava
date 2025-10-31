@@ -2,6 +2,7 @@ package ch.framedev.guis;
 
 import ch.framedev.classes.CalendarEntry;
 import ch.framedev.main.Main;
+import ch.framedev.manager.LocaleManager;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -12,7 +13,7 @@ import java.util.List;
 public class CalendarEntryOptionGUI extends JFrame {
 
     public CalendarEntryOptionGUI(LocalDate date) {
-        setTitle("Calendar Entry Options");
+        setTitle(LocaleManager.LocaleSetting.CALENDAR_ENTRY_OPTION_GUI_TITLE.getValue());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initUI(date);
         pack();
@@ -36,10 +37,10 @@ public class CalendarEntryOptionGUI extends JFrame {
         main.add(scroll, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
-        JButton addBtn = new JButton("Add");
-        JButton editBtn = new JButton("Edit");
-        JButton deleteBtn = new JButton("Delete");
-        JButton closeBtn = new JButton("Close");
+        JButton addBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_OPTION_GUI_ADD_BUTTON.getValue());
+        JButton editBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_OPTION_GUI_EDIT_BUTTON.getValue());
+        JButton deleteBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_OPTION_GUI_DELETE_BUTTON.getValue());
+        JButton closeBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_OPTION_GUI_BACK_BUTTON.getValue());
 
         editBtn.setEnabled(false);
 

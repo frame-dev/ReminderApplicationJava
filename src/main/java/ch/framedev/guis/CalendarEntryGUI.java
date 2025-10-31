@@ -2,6 +2,7 @@ package ch.framedev.guis;
 
 import ch.framedev.classes.CalendarEntry;
 import ch.framedev.main.Main;
+import ch.framedev.manager.LocaleManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +32,7 @@ public class CalendarEntryGUI extends JFrame {
     }
 
     public CalendarEntryGUI(LocalDate date, boolean isEditMode) {
-        setTitle(isEditMode ? "Edit Calendar Entry" : "Calendar Entry");
+        setTitle(isEditMode ? LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_FRAME_TITLE_EDIT.getValue() : LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_FRAME_TITLE_ADD.getValue());
         setSize(480, 420);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -67,20 +68,20 @@ public class CalendarEntryGUI extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        form.add(new JLabel("Date:"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_DATE.getValue()), gbc);
         gbc.gridx = 1;
         form.add(dateLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        form.add(new JLabel("Title:"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_TITLE.getValue()), gbc);
         gbc.gridx = 1;
         form.add(titleField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        form.add(new JLabel("Description:"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_DESCRIPTION.getValue()), gbc);
         gbc.gridx = 1;
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
@@ -89,7 +90,7 @@ public class CalendarEntryGUI extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = 3;
-        form.add(new JLabel("Time (HH:mm):"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_TIME.getValue()), gbc);
         gbc.gridx = 1;
         form.add(timeField, gbc);
 
@@ -97,40 +98,40 @@ public class CalendarEntryGUI extends JFrame {
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridwidth = 2;
-        form.add(new JLabel("(Leave time empty for all-day event)"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_EMPTY.getValue()), gbc);
         gbc.gridwidth = 1;
 
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
-        form.add(new JLabel("From Time (HH:mm):"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_FROM_TIME.getValue()), gbc);
         gbc.gridx = 1;
         form.add(fromTimeField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.anchor = GridBagConstraints.WEST;
-        form.add(new JLabel("To Time (HH:mm):"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_TO_TIME.getValue()), gbc);
         gbc.gridx = 1;
         form.add(toTimeField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
-        form.add(new JLabel("From Date (YYYY-MM-DD):"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_FROM_DATE.getValue()), gbc);
         gbc.gridx = 1;
         form.add(fromDateField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
-        form.add(new JLabel("To Date (YYYY-MM-DD):"), gbc);
+        form.add(new JLabel(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_TO_DATE.getValue()), gbc);
         gbc.gridx = 1;
         form.add(toDateField, gbc);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton saveBtn = new JButton("Save");
-        JButton cancelBtn = new JButton("Cancel");
+        JButton saveBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_SAVE_BUTTON.getValue());
+        JButton cancelBtn = new JButton(LocaleManager.LocaleSetting.CALENDAR_ENTRY_GUI_CANCEL_BUTTON.getValue());
 
         saveBtn.addActionListener(e -> onSave(date, isEditMode));
         cancelBtn.addActionListener(e -> dispose());

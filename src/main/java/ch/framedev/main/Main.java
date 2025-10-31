@@ -51,10 +51,10 @@ public class Main {
     private static String lastNotificationTitle;
 
     private static SettingsManager settingsManager;
+    private static CalendarManager calendarManager;
     private static DatabaseManager databaseManager;
     private static LocaleManager localeManager;
     private static ReminderScheduler reminderScheduler;
-    private static CalendarManager calendarManager;
 
     /**
      * The main entry point of the Reminder Application.
