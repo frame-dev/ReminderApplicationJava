@@ -15,12 +15,11 @@ import ch.framedev.classes.Reminder;
 import ch.framedev.main.Main;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class ReminderGUI {
 
     private static JFrame frame;
@@ -47,13 +46,9 @@ public class ReminderGUI {
                 }
             }
         });
-        createReminderButton.addActionListener(e -> {
-            ReminderCreateGUI.main(new String[0]);
-        });
+        createReminderButton.addActionListener(e -> ReminderCreateGUI.main(new String[0]));
         frame.setJMenuBar(getJMenuBar());
-        openCalendarButton.addActionListener(e -> {
-            CalendarGUI.main(new String[0]);
-        });
+        openCalendarButton.addActionListener(e -> CalendarGUI.main(new String[0]));
     }
 
     private JMenuBar getJMenuBar() {
@@ -66,17 +61,15 @@ public class ReminderGUI {
         JMenuItem helpItem = new JMenuItem("View Help");
         helpItem.setToolTipText("Get help for the application (Ctrl+H)");
         helpItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
-        helpItem.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null,
-                    """
-                            This is a reminder app.
-                            Use date format (yyyy-MM-dd)
-                            Use time format (HH:mm)
-                            Use comma-separated notes (e.g., Task, Reminder, Due Date)
-                            Copyright 2025©. All rights reserved framedev
-                            """
-            );
-        });
+        helpItem.addActionListener(e -> JOptionPane.showMessageDialog(null,
+                """
+                        This is a reminder app.
+                        Use date format (yyyy-MM-dd)
+                        Use time format (HH:mm)
+                        Use comma-separated notes (e.g., Task, Reminder, Due Date)
+                        Copyright 2025©. All rights reserved framedev
+                        """
+        ));
 
         // Add menu item to menu, and menu to menu bar
         helpMenu.add(helpItem);

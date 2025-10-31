@@ -1,6 +1,7 @@
 package ch.framedev.guis;
 
 import ch.framedev.manager.LocaleManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -85,21 +86,7 @@ public class CalendarGUI extends JFrame {
         // Add day buttons
         for (int day = 1; day <= daysInMonth; day++) {
             LocalDate date = currentMonth.atDay(day);
-            JButton dayBtn = new JButton(String.valueOf(day));
-            dayBtn.setMargin(new Insets(4, 4, 4, 4));
-            dayBtn.setFocusable(false);
-
-            if (date.equals(today)) {
-                dayBtn.setBackground(new Color(0xD1F0D1));
-                dayBtn.setOpaque(true);
-            }
-
-            // Example action: print selected date
-            dayBtn.addActionListener(e -> {
-                System.out.println("Selected date: " + date);
-                CalendarEntryOptionGUI entryOptionGUI = new CalendarEntryOptionGUI(date);
-                entryOptionGUI.setVisible(true);
-            });
+            JButton dayBtn = getDayBtn(day, date, today);
             calendarPanel.add(dayBtn);
         }
 
@@ -112,6 +99,25 @@ public class CalendarGUI extends JFrame {
 
         calendarPanel.revalidate();
         calendarPanel.repaint();
+    }
+
+    private static @NotNull JButton getDayBtn(int day, LocalDate date, LocalDate today) {
+        JButton dayBtn = new JButton(String.valueOf(day));
+        dayBtn.setMargin(new Insets(4, 4, 4, 4));
+        dayBtn.setFocusable(false);
+
+        if (date.equals(today)) {
+            dayBtn.setBackground(new Color(0xD1F0D1));
+            dayBtn.setOpaque(true);
+        }
+
+        // Example action: print selected date
+        dayBtn.addActionListener(e -> {
+            System.out.println("Selected date: " + date);
+            CalendarEntryOptionGUI entryOptionGUI = new CalendarEntryOptionGUI(date);
+            entryOptionGUI.setVisible(true);
+        });
+        return dayBtn;
     }
 
     public static void main(String[] args) {

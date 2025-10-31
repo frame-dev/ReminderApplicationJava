@@ -20,6 +20,7 @@ import java.util.Optional;
  * Represents a setting in the application.
  * Each setting has a unique key and can be retrieved, updated, or deleted.
  */
+@SuppressWarnings("unused")
 public enum Setting {
 
     /**

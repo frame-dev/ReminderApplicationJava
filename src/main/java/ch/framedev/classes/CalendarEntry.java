@@ -3,6 +3,7 @@ package ch.framedev.classes;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class CalendarEntry {
 
     private String calendarId = UUID.randomUUID().toString();

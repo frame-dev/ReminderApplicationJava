@@ -16,6 +16,7 @@ import ch.framedev.main.Main;
 
 import javax.swing.*;
 
+@SuppressWarnings("unused")
 public class ReminderView {
 
     private static JFrame frame;
@@ -37,9 +38,7 @@ public class ReminderView {
     }
 
     public ReminderView() {
-        editReminderButton.addActionListener(e -> {
-            Main.reminderManager.editReminder(Reminder.reminderFromString(reminderTextArea.getText()));
-        });
+        editReminderButton.addActionListener(e -> Main.reminderManager.editReminder(Reminder.reminderFromString(reminderTextArea.getText())));
         removeReminderButton.addActionListener(e -> {
             Reminder reminder = Reminder.reminderFromString(reminderTextArea.getText());
             Main.reminderManager.deleteReminder(reminder.getTitle());

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class ReminderManager {
 
     private final Logger logger = LogManager.getLogger(ReminderManager.class);

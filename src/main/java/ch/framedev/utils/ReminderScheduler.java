@@ -52,10 +52,6 @@ public class ReminderScheduler {
         }
     }
 
-    public ScheduledExecutorService getScheduler() {
-        return scheduler;
-    }
-
     public void playSoundAsync() {
         new Thread(() -> {
             try (FileInputStream fis = new FileInputStream(

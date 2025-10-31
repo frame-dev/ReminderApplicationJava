@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * Represents a reminder with a title, message, date, time, notes, and visibility status.
  */
+@SuppressWarnings("unused")
 public class Reminder {
 
     private String title;

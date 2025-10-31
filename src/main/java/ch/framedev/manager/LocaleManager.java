@@ -14,10 +14,10 @@ import ch.framedev.yamlutils.FileConfiguration;
 
 import java.io.File;
 
-public class LocaleManager {
+@SuppressWarnings("unused")
+public record LocaleManager(Locale locale) {
 
     private static volatile FileConfiguration fileConfiguration;
-    private final Locale locale;
 
     public LocaleManager(Locale locale) {
         this.locale = locale;
@@ -46,7 +46,7 @@ public class LocaleManager {
         return fileConfiguration.getString(key, defaultValue);
     }
 
-    public static enum LocaleSetting {
+    public enum LocaleSetting {
 
         DISPLAY_MENU("displayMenu"),
         DISPLAY_SETTINGS("displaySettings"),
@@ -85,7 +85,7 @@ public class LocaleManager {
         }
 
         public String getValue() {
-            return getValue((String) null);
+            return getValue(null);
         }
 
         public String getValue(String defaultValue) {

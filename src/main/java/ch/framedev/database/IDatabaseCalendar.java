@@ -5,6 +5,7 @@ import ch.framedev.classes.CalendarEntry;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface IDatabaseCalendar {
 
     boolean testConnection(Map<String, Object> parameters);

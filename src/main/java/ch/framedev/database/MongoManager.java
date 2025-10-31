@@ -31,7 +31,7 @@ public class MongoManager implements IDatabase, IDatabaseCalendar {
         String host = safeToString(mongoDbConnections.get("host"), "localhost");
         String username = safeToString(mongoDbConnections.get("username"), null);
         String password = safeToString(mongoDbConnections.get("password"), null);
-        int port = safeToInt(mongoDbConnections.get("port"), 27017);
+        int port = safeToInt(mongoDbConnections.get("port"));
         String database = safeToString(mongoDbConnections.get("database"), "test");
 
         try {
@@ -49,10 +49,10 @@ public class MongoManager implements IDatabase, IDatabaseCalendar {
         String host = safeToString(parameters.get("host"), "localhost");
         String username = safeToString(parameters.get("username"), null);
         String password = safeToString(parameters.get("password"), null);
-        int port = safeToInt(parameters.get("port"), 27017);
+        int port = safeToInt(parameters.get("port"));
         String database = safeToString(parameters.get("database"), "test");
 
-        MongoDBManager tmpManager = null;
+        MongoDBManager tmpManager;
         try {
             tmpManager = new MongoDBManager(host, username, password, port, database);
             tmpManager.connect();
@@ -184,15 +184,15 @@ public class MongoManager implements IDatabase, IDatabaseCalendar {
         return bMongoDBManager.exists("title", title, DatabaseManager.TABLE_NAME);
     }
 
-    private static int safeToInt(Object val, int defaultVal) {
-        if (val == null) return defaultVal;
+    private static int safeToInt(Object val) {
+        if (val == null) return 27017;
         if (val instanceof Number) {
             return ((Number) val).intValue();
         }
         try {
             return Integer.parseInt(val.toString());
         } catch (NumberFormatException e) {
-            return defaultVal;
+            return 27017;
         }
     }
 

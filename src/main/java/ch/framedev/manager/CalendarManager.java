@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class CalendarManager {
 
     private final Logger logger = LogManager.getLogger(CalendarManager.class);

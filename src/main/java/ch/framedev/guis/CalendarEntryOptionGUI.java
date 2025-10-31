@@ -63,9 +63,7 @@ public class CalendarEntryOptionGUI extends JFrame {
 
         closeBtn.addActionListener(e -> dispose());
 
-        eventList.addListSelectionListener((ListSelectionEvent e) -> {
-            editBtn.setEnabled(!eventList.isSelectionEmpty());
-        });
+        eventList.addListSelectionListener((ListSelectionEvent e) -> editBtn.setEnabled(!eventList.isSelectionEmpty()));
 
         deleteBtn.addActionListener(e -> {
             if(eventList.isSelectionEmpty()) return;

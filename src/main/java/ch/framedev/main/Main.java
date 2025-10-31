@@ -37,6 +37,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Main {
 
     // initialization of the main class logger.
@@ -302,7 +303,7 @@ public class Main {
 
     public static TrayIcon createTrayIcon() throws Exception {
         copyTrayIconToFile(new File(utils.getFilePath(Main.class) + "reminder_app_icon_256x256.png"));
-        try (InputStream is = new FileInputStream(new File(utils.getFilePath(Main.class) + "reminder_app_icon_256x256.png"))) {
+        try (InputStream is = new FileInputStream(utils.getFilePath(Main.class) + "reminder_app_icon_256x256.png")) {
             BufferedImage image;
             image = ImageIO.read(is);
             if (image == null) {

@@ -28,6 +28,7 @@ import java.util.Objects;
  * @author FrameDev
  * @since 25.02.2025 22:05
  */
+@SuppressWarnings("unused")
 public class SettingsGUI {
     private static JFrame frame;
     private JPanel panel;
@@ -87,16 +88,14 @@ public class SettingsGUI {
         }
         databaseComboBox.setSelectedItem(Main.getDatabaseManager().getDatabaseType().name());
         databaseComboBox.addActionListener(e -> {
-            Main.getDatabaseManager().setDatabaseType(DatabaseManager.DatabaseType.valueOf(databaseComboBox.getSelectedItem().toString()));
+            Main.getDatabaseManager().setDatabaseType(DatabaseManager.DatabaseType.valueOf(Objects.requireNonNull(databaseComboBox.getSelectedItem()).toString()));
             Main.getSettingsManager().getConfiguration().set("database.databaseType", DatabaseManager.DatabaseType.valueOf(databaseComboBox.getSelectedItem().toString()).name());
             Main.getSettingsManager().saveSettings();
             JOptionPane.showMessageDialog(null, "Please Restart Application");
         });
-        testSoundButton.addActionListener(e -> {
-            Main.getReminderScheduler().playSoundAsync();
-        });
+        testSoundButton.addActionListener(e -> Main.getReminderScheduler().playSoundAsync());
         testConnectionButton.addActionListener(e -> {
-            if(((String) databaseComboBox.getSelectedItem()).equalsIgnoreCase("MySQL")) {
+            if(((String) Objects.requireNonNull(databaseComboBox.getSelectedItem())).equalsIgnoreCase("MySQL")) {
                 String host = mysqlHostNameTextField.getText();
                 String port = mysqlPortTextField.getText();
                 String user = mysqlUserTextField.getText();
@@ -173,17 +172,15 @@ public class SettingsGUI {
         JMenuItem helpItem = new JMenuItem("View Help");
         helpItem.setToolTipText("Get help for the application (Ctrl+H)");
         helpItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
-        helpItem.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null,
-                    """
-                            This is a reminder app.
-                            Use date format (yyyy-MM-dd)
-                            Use time format (HH:mm)
-                            Use comma-separated notes (e.g., Task, Reminder, Due Date)
-                            Copyright 2025©. All rights reserved framedev
-                            """
-            );
-        });
+        helpItem.addActionListener(e -> JOptionPane.showMessageDialog(null,
+                """
+                        This is a reminder app.
+                        Use date format (yyyy-MM-dd)
+                        Use time format (HH:mm)
+                        Use comma-separated notes (e.g., Task, Reminder, Due Date)
+                        Copyright 2025©. All rights reserved framedev
+                        """
+        ));
 
         // Add menu item to the menu and menu to the menu bar
         helpMenu.add(helpItem);
